@@ -3,7 +3,9 @@
 **Community JSON-RPC proxy with rate limiting and metrics.**
 
 KraiNode RPC Proxy is a lightweight, production-ready JSON-RPC proxy that provides rate limiting, monitoring, and secure forwarding for blockchain RPC endpoints. Perfect for developers and teams who need reliable RPC access without exposing upstream URLs. This repo contains the backend code for the community and anyone to use.
+
 👉 Live Playground: [https://krainode.krissemmy.com/playground](https://krainode.krissemmy.com/playground)
+
 ---
 
 ## ✨ Features

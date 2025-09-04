@@ -86,7 +86,7 @@ curl http://localhost:8000/
 |----------|---------|-------------|
 | `SERVICE_NAME` | `krainode` | Service name for logging |
 | `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `ALLOWED_ORIGINS` | `["*"]` | CORS allowed origins |
+| `ALLOWED_ORIGINS` | `["*"]` or for tighter security `["http://localhost]` | CORS allowed origins |
 | `RATE_LIMIT_RPS` | `5` | Rate limit (requests per second per IP per chain) |
 | `CHAINS_JSON` | `{"ethereum":"https://ethereum-rpc.publicnode.com"}` | Chain configuration |
 | `REQUEST_TIMEOUT_SECONDS` | `20` | Upstream request timeout |

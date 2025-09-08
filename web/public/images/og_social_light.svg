@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid meet">
+
+<defs>
+  <linearGradient id="ogbgL" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#2563eb"/>
+    <stop offset="100%" stop-color="#0b1220"/>
+  </linearGradient>
+</defs>
+<rect width="1200" height="630" fill="url(#ogbgL)"/>
+<g transform="translate(80,120)">
+  <rect x="0" y="0" width="160" height="160" rx="20" fill="none" stroke="#ffffff" stroke-opacity="0.3"/>
+  <circle cx="40" cy="80" r="8" fill="#38bdf8"/>
+  <circle cx="80" cy="36" r="8" fill="#38bdf8"/>
+  <circle cx="120" cy="80" r="8" fill="#38bdf8"/>
+  <circle cx="80" cy="124" r="8" fill="#38bdf8"/>
+  <path d="M40,80 L80,36 L120,80 L80,124 L40,80" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="220" y="68" font-family="Inter, system-ui" font-size="84" font-weight="800" fill="#ffffff">KraiNode</text>
+  <text x="220" y="140" font-family="Inter, system-ui" font-size="30" fill="#ffffff" opacity="0.9">
+    Proxy, test, and monitor JSON-RPC in minutes.
+  </text>
+</g>
+</svg>

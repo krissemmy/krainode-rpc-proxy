@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet">
+
+<defs>
+  <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#38bdf8"/>
+    <stop offset="100%" stop-color="#2563eb"/>
+  </linearGradient>
+</defs>
+<rect width="512" height="512" rx="40" fill="#000000"/>
+<rect x="56" y="96" width="400" height="320" rx="14" fill="none" stroke="url(#grad2)" stroke-width="12"/>
+<circle cx="92" cy="124" r="6" fill="#38bdf8"/>
+<circle cx="116" cy="124" r="6" fill="#ffffff" opacity="0.7"/>
+<circle cx="140" cy="124" r="6" fill="#ffffff" opacity="0.5"/>
+<text x="76" y="176" font-family="monospace" font-size="20" fill="#ffffff">{{"method":"eth_blockNumber"}}</text>
+<text x="76" y="206" font-family="monospace" font-size="20" fill="#ffffff">{{"params":[]}}</text>
+<rect x="76" y="360" width="140" height="36" rx="10" fill="#2563eb"/>
+<text x="96" y="385" font-family="Inter, system-ui" font-size="18" fill="#ffffff">Send</text>
+</svg>

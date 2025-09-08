@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from ..config import get_settings
 from ..rpc import rpc_forward, resolve_upstream, ping_chain
-from ..rate_limit import check_rate_limit
+from ..rate_limit import check_rate_limit, get_rate_limiter
 from ..metrics import record_request
 from ..logging import RequestContext, log_rpc_request
 from ..schemas.rpc import JsonRpcRequest, JsonRpcResponse, PingResponse, ChainsResponse, ChainInfo
@@ -61,7 +61,22 @@ async def ping_chain_endpoint(chain: str, request: Request):
                 error_type=None if result["ok"] else "ping_error"
             )
             
-            return PingResponse(**result)
+            # Add rate limit headers
+            response = PingResponse(**result)
+            rate_limiter = get_rate_limiter()
+            remaining, reset_time = rate_limiter.get_remaining_and_reset(
+                request.client.host if hasattr(request.client, 'host') else 'unknown', 
+                chain
+            )
+            
+            return JSONResponse(
+                content=response.dict(),
+                headers={
+                    "X-RateLimit-Limit": str(get_settings().rate_limit_rps),
+                    "X-RateLimit-Remaining": str(remaining),
+                    "X-RateLimit-Reset": str(reset_time)
+                }
+            )
             
         except HTTPException as e:
             # Log the error
@@ -176,9 +191,21 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
                 error_type=None if status_code == 200 else "upstream_error"
             )
             
+            # Add rate limit headers
+            rate_limiter = get_rate_limiter()
+            remaining, reset_time = rate_limiter.get_remaining_and_reset(
+                request.client.host if hasattr(request.client, 'host') else 'unknown', 
+                chain
+            )
+            
             return JSONResponse(
                 status_code=status_code,
-                content=response_body
+                content=response_body,
+                headers={
+                    "X-RateLimit-Limit": str(get_settings().rate_limit_rps),
+                    "X-RateLimit-Remaining": str(remaining),
+                    "X-RateLimit-Reset": str(reset_time)
+                }
             )
             
         except HTTPException as e:

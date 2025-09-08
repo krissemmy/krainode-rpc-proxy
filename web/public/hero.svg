@@ -1,0 +1,57 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#gradient)" opacity="0.1"/>
+  
+  <!-- Network nodes -->
+  <circle cx="100" cy="100" r="8" fill="#3B82F6" opacity="0.8"/>
+  <circle cx="200" cy="150" r="6" fill="#60A5FA" opacity="0.6"/>
+  <circle cx="300" cy="80" r="10" fill="#3B82F6" opacity="0.9"/>
+  <circle cx="400" cy="120" r="7" fill="#93C5FD" opacity="0.7"/>
+  <circle cx="500" cy="100" r="5" fill="#60A5FA" opacity="0.5"/>
+  
+  <!-- Secondary nodes -->
+  <circle cx="150" cy="250" r="4" fill="#93C5FD" opacity="0.4"/>
+  <circle cx="250" cy="300" r="6" fill="#60A5FA" opacity="0.6"/>
+  <circle cx="350" cy="280" r="5" fill="#3B82F6" opacity="0.7"/>
+  <circle cx="450" cy="250" r="4" fill="#93C5FD" opacity="0.5"/>
+  
+  <!-- Connection lines -->
+  <path d="M100 100L200 150L300 80L400 120L500 100" stroke="#3B82F6" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M200 150L250 300L350 280L450 250" stroke="#60A5FA" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M300 80L350 280" stroke="#93C5FD" stroke-width="1" fill="none" opacity="0.3"/>
+  
+  <!-- Central hub -->
+  <circle cx="300" cy="200" r="15" fill="#3B82F6" opacity="0.9"/>
+  <circle cx="300" cy="200" r="10" fill="white"/>
+  <circle cx="300" cy="200" r="5" fill="#3B82F6"/>
+  
+  <!-- Hub connections -->
+  <path d="M100 100L300 200" stroke="#3B82F6" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M200 150L300 200" stroke="#60A5FA" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M300 80L300 200" stroke="#93C5FD" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M400 120L300 200" stroke="#60A5FA" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M500 100L300 200" stroke="#3B82F6" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M250 300L300 200" stroke="#93C5FD" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M350 280L300 200" stroke="#60A5FA" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M450 250L300 200" stroke="#93C5FD" stroke-width="1" fill="none" opacity="0.3"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="200" cy="125" r="2" fill="white" opacity="0.8">
+    <animateMotion dur="3s" repeatCount="indefinite">
+      <path d="M0,0L100,75L200,0L300,120L400,0"/>
+    </animateMotion>
+  </circle>
+  
+  <circle cx="250" cy="275" r="2" fill="white" opacity="0.6">
+    <animateMotion dur="4s" repeatCount="indefinite">
+      <path d="M0,0L100,25L200,0L300,80L400,0"/>
+    </animateMotion>
+  </circle>
+  
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#60A5FA;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+</svg>

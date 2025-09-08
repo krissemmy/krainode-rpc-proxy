@@ -226,3 +226,6 @@ out/
 # OS
 .DS_Store
 Thumbs.db
+
+# custom
+ec2_instance_deploy.sh

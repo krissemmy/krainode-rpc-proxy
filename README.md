@@ -1,8 +1,8 @@
 # KraiNode RPC Proxy
 
-**Community JSON-RPC proxy with rate limiting and metrics.**
+**Production-ready JSON-RPC proxy with rate limiting, monitoring, and secure forwarding.**
 
-KraiNode RPC Proxy is a lightweight, production-ready JSON-RPC proxy that provides rate limiting, monitoring, and secure forwarding for blockchain RPC endpoints. Perfect for developers and teams who need reliable RPC access without exposing upstream URLs. This repo contains the backend code for the community and anyone to use.
+KraiNode RPC Proxy is a complete solution that provides secure, rate-limited access to blockchain RPC endpoints. It includes a FastAPI backend with comprehensive monitoring, a React frontend with an interactive playground, and Docker-based deployment with Prometheus and Grafana monitoring.
 
 👉 Live Playground: [https://krainode.krissemmy.com/playground](https://krainode.krissemmy.com/playground)
 
@@ -10,12 +10,28 @@ KraiNode RPC Proxy is a lightweight, production-ready JSON-RPC proxy that provid
 
 ## ✨ Features
 
+### Backend (FastAPI)
 - 🛡️ **Server-side Proxy**: Keep upstream URLs private, expose only your KraiNode endpoints
 - ⚡ **Rate Limiting**: Per-IP per-chain rate limiting with configurable limits
 - 📊 **Metrics & Monitoring**: Prometheus metrics and structured JSON logging
-- 🐳 **Docker Ready**: Single-container deployment with docker-compose
 - 🔧 **Easy Configuration**: Environment-based configuration for chains and limits
 - 📈 **Production Ready**: Health checks, structured logging, and monitoring
+- 🛡️ **Security Headers**: Comprehensive security headers via Caddy reverse proxy
+- 📏 **Request Size Limits**: Protection against large request attacks
+
+### Frontend (React + TypeScript)
+- 🎮 **Interactive Playground**: Test JSON-RPC methods with a user-friendly interface
+- 🔗 **Chain Selection**: Dynamically load available chains from backend
+- 📝 **JSON Editor**: Syntax highlighting and validation for requests
+- 🎯 **Method Presets**: Quick access to common Ethereum RPC methods
+- 📱 **Responsive Design**: Mobile-friendly interface
+- 🌙 **Theme Support**: Light/dark mode toggle
+
+### Infrastructure
+- 🐳 **Docker Ready**: Complete stack with docker-compose
+- 📊 **Monitoring Stack**: Prometheus + Grafana for metrics visualization
+- 🔒 **HTTPS Support**: Automatic SSL certificates via Caddy
+- 🚀 **Production Ready**: Health checks, proper logging, and error handling
 
 ## 🚀 Quick Start
 
@@ -30,27 +46,46 @@ KraiNode RPC Proxy is a lightweight, production-ready JSON-RPC proxy that provid
 
 2. **Configure your chains** (edit `.env`):
    ```bash
-   # Add your upstream RPC URLs, u can use public urls or ur private node urls
-   CHAINS_JSON={"ethereum":"https://ethereum-rpc.publicnode.com","arbitrum":"https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"}
+   # Add your upstream RPC URLs, you can use public URLs or your private node URLs
+   CHAINS_JSON={"ethereum-mainnet":"https://ethereum-rpc.publicnode.com","arbitrum1":"https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"}
+   
+   # Set your domain for SSL certificates
+   EMAIL=your-email@example.com
+   API_HOST=your-domain.com
+   
+   # Generate a secure Grafana password
+   GRAFANA_ADMIN_PASSWORD=your_secure_password_here
    ```
 
-3. **Start the service**:
+3. **Start the complete stack**:
    ```bash
    docker compose up --build
    ```
 
-4. **Access the API**:
-   - API: http://localhost:8000
-   - Health Check: http://localhost:8000/healthz
-   - Metrics: http://localhost:8000/metrics
-   - Documentation: http://localhost:8000/docs
+4. **Access the services**:
+   - **Web UI**: http://localhost:8000 (or https://your-domain.com)
+   - **Playground**: http://localhost:8000/playground
+   - **API Docs**: http://localhost:8000/docs
+   - **Health Check**: http://localhost:8000/healthz
+   - **Metrics**: http://localhost:8000/metrics
+   - **Prometheus**: http://localhost:9090
+   - **Grafana**: http://localhost:3000 (admin/password from GRAFANA_ADMIN_PASSWORD)
 
 ## 📋 API Usage
 
-### Basic JSON-RPC Request
+### Using the Web Playground (Recommended)
 
+1. Open http://localhost:8000/playground
+2. Select a chain from the dropdown
+3. Choose a method or enter a custom one
+4. Fill in parameters and click "Send Request"
+5. View the response with syntax highlighting
+
+### Using cURL
+
+#### Basic JSON-RPC Request
 ```bash
-curl -X POST http://localhost:8000/api/rpc/ethereum/json \
+curl -X POST http://localhost:8000/api/rpc/ethereum-mainnet/json \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -60,20 +95,17 @@ curl -X POST http://localhost:8000/api/rpc/ethereum/json \
   }'
 ```
 
-### Ping a Chain
-
+#### Ping a Chain
 ```bash
-curl http://localhost:8000/api/rpc/ethereum/ping
+curl http://localhost:8000/api/rpc/ethereum-mainnet/ping
 ```
 
-### Get Available Chains
-
+#### Get Available Chains
 ```bash
 curl http://localhost:8000/api/chains
 ```
 
-### Get API Information
-
+#### Get API Information
 ```bash
 curl http://localhost:8000/
 ```
@@ -86,44 +118,54 @@ curl http://localhost:8000/
 |----------|---------|-------------|
 | `SERVICE_NAME` | `krainode` | Service name for logging |
 | `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `ALLOWED_ORIGINS` | `["*"]` or for tighter security `["http://localhost]` | CORS allowed origins |
+| `ALLOWED_ORIGINS` | `["https://localhost:8000"]` | CORS allowed origins (security: not wildcard by default) |
 | `RATE_LIMIT_RPS` | `5` | Rate limit (requests per second per IP per chain) |
-| `CHAINS_JSON` | `{"ethereum":"https://ethereum-rpc.publicnode.com"}` | Chain configuration |
+| `CHAINS_JSON` | See env.example | Chain configuration (JSON string) |
 | `REQUEST_TIMEOUT_SECONDS` | `20` | Upstream request timeout |
+| `EMAIL` | `YOUR_EMAIL` | Email for SSL certificate registration |
+| `API_HOST` | `YOUR_HOSTED_DOMAIN` | Domain for Caddy SSL certificates |
+| `GRAFANA_ADMIN_PASSWORD` | `your_secure_password_here` | Grafana admin password |
 
 ### Adding New Chains
 
 Edit your `.env` file to add more chains:
 
 ```bash
-CHAINS_JSON={"ethereum":"https://ethereum-rpc.publicnode.com","polygon":"https://polygon-rpc.publicnode.com"}
+CHAINS_JSON={"ethereum-mainnet":"https://ethereum-rpc.publicnode.com","polygon-mainnet":"https://polygon-rpc.publicnode.com","arbitrum1":"https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"}
 ```
 
-Restart the service and the new chains will be available immediately.
+Restart the service and the new chains will be available immediately in both the API and the web playground.
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│    Users        │───▶│   KraiNode      │───▶│  Upstream RPC   │
-│                 │    │   (Proxy)       │    │   (Private)     │
+│   Web Browser   │───▶│   Caddy         │───▶│   FastAPI       │
+│   (React App)   │    │   (HTTPS/SSL)   │    │   (Backend)     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌─────────────────┐
-                       │   Monitoring    │
-                       │ (Prometheus +   │
-                       │   Grafana)      │
-                       └─────────────────┘
+                              │                        │
+                              ▼                        ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │   Monitoring    │    │  Upstream RPC   │
+                       │ (Prometheus +   │    │   (Private)     │
+                       │   Grafana)      │    │                 │
+                       └─────────────────┘    └─────────────────┘
 ```
 
 ### Components
 
+- **React Frontend**: Interactive playground and web interface
+- **Caddy**: Reverse proxy with automatic HTTPS and security headers
 - **FastAPI Backend**: Handles RPC proxying, rate limiting, and metrics
 - **Prometheus**: Metrics collection and storage
-- **Grafana**: Metrics visualization and alerting (optional)
+- **Grafana**: Metrics visualization and dashboards
 
 ## 📊 API Endpoints
+
+### Web Interface
+- `GET /` - Home page with feature overview
+- `GET /playground` - Interactive JSON-RPC testing interface
+- `GET /team` - Team information page
 
 ### RPC Proxy
 - `POST /api/rpc/{chain}/json` - Proxy JSON-RPC requests
@@ -133,7 +175,7 @@ Restart the service and the new chains will be available immediately.
 - `GET /api/chains` - List available chains
 - `GET /healthz` - Health check
 - `GET /metrics` - Prometheus metrics
-- `GET /` - API information and available endpoints
+- `GET /docs` - Interactive API documentation
 
 ## 📈 Metrics
 
@@ -148,48 +190,60 @@ KraiNode exposes Prometheus metrics at `/metrics`:
 
 Rate limiting is applied per IP address per chain:
 
-- Default: 5 requests per second per IP per chain
-- Configurable via `RATE_LIMIT_RPS` environment variable
-- Returns HTTP 429 with `Retry-After` header when exceeded
-- Headers include rate limit information:
+- **Default**: 5 requests per second per IP per chain
+- **Configurable**: Via `RATE_LIMIT_RPS` environment variable
+- **Response**: HTTP 429 with `Retry-After` header when exceeded
+- **Headers**: Include comprehensive rate limit information:
   - `X-RateLimit-Limit`: Rate limit per second
   - `X-RateLimit-Remaining`: Remaining requests in current window
   - `X-RateLimit-Reset`: Time when limit resets
+- **Security**: Prevents abuse while allowing legitimate usage
 
 
 ## 🌐 Supported Chains
 
-Currently configured on env file to PublicNode for:
+Currently configured in `env.example` with PublicNode endpoints:
 
-- Ethereum Mainnet  
-- Base Mainnet  
-- Celo Mainnet  
-- Avail Mainnet  
-- Blast Mainnet  
-- Mantle Mainnet  
-- Linea Mainnet  
-- Sei EVM Mainnet  
-- Scroll Mainnet  
-- Arbitrum One  
-- Avalanche C-Chain  
-- Gnosis Mainnet  
-- Unichain Mainnet 
+- **Ethereum Mainnet** (`ethereum-mainnet`)
+- **Base Mainnet** (`base-mainnet`)
+- **Celo Mainnet** (`celo-mainnet`)
+- **Avail Mainnet** (`avail-mainnet`)
+- **Blast Mainnet** (`blast-mainnet`)
+- **Mantle Mainnet** (`mantle-mainnet`)
+- **Linea Mainnet** (`linea-mainnet`)
+- **Sei EVM Mainnet** (`sei-evm-mainnet`)
+- **Scroll Mainnet** (`scroll-mainnet`)
+- **Arbitrum One** (`arbitrum1`)
+- **Avalanche C-Chain** (`avalanche-c-chain`)
+- **Gnosis Mainnet** (`gnosis-mainnet`)
+- **Unichain Mainnet** (`unichain-mainnet`)
 
-### Running Tests
+## 🛠️ Development
+
+### Prerequisites
+- Python 3.8+
+- Node.js 16+
+- Docker & Docker Compose
+
+### Development Setup
+
+1. **Clone and Start development servers**:
+   ```bash
+   git clone https://github.com/krissemmy/krainode-rpc-proxy.git
+   cd krainode-rpc-proxy
+   make dev
+   ```
+
+### Available Commands
 
 ```bash
-cd backend
-pytest tests/ -v
-```
-
-### Code Quality
-
-```bash
-cd backend
-black app/ tests/
-isort app/ tests/
-flake8 app/ tests/
-mypy app/
+make help          # Show all available commands
+make dev           # Start development servers
+make build         # Build frontend
+make docker-up     # Start with Docker Compose
+make docker-down   # Stop Docker Compose
+make clean         # Clean build artifacts
+make status        # Check service status
 ```
 
 ## 🤝 Contributing

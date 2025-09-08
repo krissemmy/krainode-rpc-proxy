@@ -1,10 +1,12 @@
-"""Main FastAPI application for KraiNode RPC Proxy."""
+"""Main FastAPI application for KraiNode."""
 
 import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse, Response, FileResponse
 import uvicorn
 
 from .config import get_settings
@@ -25,62 +27,12 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     setup_logging(settings.log_level)
     logger = get_logger("startup")
-    logger.info("Starting KraiNode RPC Proxy", service=settings.service_name)
-    
-    # Print startup information
-    print_startup_info(settings)
+    logger.info("Starting KraiNode", service=settings.service_name)
     
     yield
     
     # Shutdown
-    logger.info("Shutting down KraiNode RPC Proxy")
-
-
-def print_startup_info(settings):
-    """Print startup information and available endpoints."""
-    print("\n" + "="*80)
-    print("🚀 KraiNode RPC Proxy - Community Edition")
-    print("="*80)
-    print(f"📡 Service: {settings.service_name}")
-    print(f"🌐 Port: 8000")
-    print(f"⚡ Rate Limit: {settings.rate_limit_rps} req/s per IP per chain")
-    print(f"🔗 Configured Chains: {len(settings.chains)}")
-    
-    print("\n📋 Available Endpoints:")
-    print("  • Health Check: GET  /healthz")
-    print("  • Metrics:      GET  /metrics")
-    print("  • RPC Proxy:    POST /api/rpc/{chain}/json")
-    print("  • Ping Test:    GET  /api/rpc/{chain}/ping")
-    print("  • Chain List:   GET  /api/chains")
-    
-    print("\n🔗 Available Chains:")
-    for chain_slug, upstream_url in settings.chains.items():
-        print(f"  • {chain_slug}: /api/rpc/{chain_slug}/json")
-    
-    print("\n💡 Usage Examples:")
-    print("  # Get latest block number")
-    print("  curl -X POST http://localhost:8000/api/rpc/ethereum/json \\")
-    print("    -H 'Content-Type: application/json' \\")
-    print("    -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_blockNumber\",\"params\":[]}'")
-    print()
-    print("  # Ping test")
-    print("  curl http://localhost:8000/api/rpc/ethereum/ping")
-    print()
-    print("  # Get chain list")
-    print("  curl http://localhost:8000/api/chains")
-    
-    print("\n📊 Monitoring:")
-    print("  • Prometheus metrics: http://localhost:8000/metrics")
-    print("  • Health check: http://localhost:8000/healthz")
-    
-    print("\n🔧 Configuration:")
-    print(f"  • Add more chains by updating CHAINS_JSON in .env")
-    print(f"  • Adjust rate limits with RATE_LIMIT_RPS")
-    print(f"  • View logs for request details")
-    
-    print("="*80)
-    print("✅ KraiNode RPC Proxy is ready!")
-    print("="*80 + "\n")
+    logger.info("Shutting down KraiNode")
 
 
 def create_app() -> FastAPI:
@@ -88,26 +40,47 @@ def create_app() -> FastAPI:
     settings = get_settings()
     
     app = FastAPI(
-        title="KraiNode RPC Proxy",
-        description="Community JSON-RPC proxy with rate limiting and metrics",
+        title="KraiNode",
+        description="JSON-RPC proxy and playground",
         version="1.0.0",
-        lifespan=lifespan,
-        docs_url="/docs",
-        redoc_url="/redoc"
+        lifespan=lifespan
+    )
+    
+    # GZip middleware
+    app.add_middleware(
+        GZipMiddleware,
+        minimum_size=1000,
     )
     
     # CORS middleware
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_credentials=False,  # Security: Disable credentials for CORS
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "X-API-Key"],
     )
+    
+    # Request size limit middleware
+    @app.middleware("http")
+    async def limit_request_size(request: Request, call_next):
+        if request.headers.get("content-length"):
+            content_length = int(request.headers["content-length"])
+            if content_length > 10 * 1024 * 1024:  # 10MB limit
+                return JSONResponse(
+                    status_code=413,
+                    content={"detail": "Request too large"}
+                )
+        response = await call_next(request)
+        return response
     
     # Include routers
     app.include_router(rpc.router)
     
+    @app.api_route("/readyz", methods=["GET","HEAD"])
+    def readyz():
+        return {"ok": True}
+
     # Health check endpoint
     @app.get("/healthz", response_model=HealthResponse)
     async def health_check():
@@ -130,24 +103,48 @@ def create_app() -> FastAPI:
             media_type=content_type
         )
     
-    # Root endpoint with API information
-    @app.get("/")
-    async def root():
-        """Root endpoint with API information."""
-        return {
-            "service": "KraiNode RPC Proxy",
-            "version": "1.0.0",
-            "description": "Community JSON-RPC proxy with rate limiting and metrics",
-            "endpoints": {
-                "health": "/healthz",
-                "metrics": "/metrics", 
-                "docs": "/docs",
-                "rpc_proxy": "/api/rpc/{chain}/json",
-                "ping": "/api/rpc/{chain}/ping",
-                "chains": "/api/chains"
-            },
-            "available_chains": list(settings.chains.keys())
+    # Serve static files (frontend)
+    try:
+        # Mount static assets (CSS, JS, images, etc.)
+        app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+        app.mount("/images", StaticFiles(directory="static/images"), name="images")
+        
+        # --- (serves root-level files like /favicon.ico) ----
+        ROOT_STATIC = {
+            "/favicon.ico": ("static/favicon.ico", "image/x-icon"),
+            "/site.webmanifest": ("static/site.webmanifest", "application/manifest+json"),
+            "/apple-touch-icon.png": ("static/apple-touch-icon.png", "image/png"),
+            "/favicon-16x16.png": ("static/favicon-16x16.png", "image/png"),
+            "/favicon-32x32.png": ("static/favicon-32x32.png", "image/png"),
+            "/safari-pinned-tab.svg": ("static/safari-pinned-tab.svg", "image/svg+xml"),
+            "/og.png": ("static/og.png", "image/png"),
         }
+
+        def _make_static_route(file_path: str, media_type: str):
+            async def _serve():
+                return FileResponse(file_path, media_type=media_type)
+            return _serve
+
+        for route, (fp, mt) in ROOT_STATIC.items():
+            app.add_api_route(route, _make_static_route(fp, mt), methods=["GET"])
+        
+        # Catch-all route for SPA - serve index.html for any non-API routes
+        @app.get("/{full_path:path}")
+        async def serve_spa(full_path: str):
+            """Serve the SPA for any non-API routes."""
+            # Don't serve SPA for API routes
+            if full_path.startswith("api/") or full_path.startswith("metrics") or full_path.startswith("healthz"):
+                return JSONResponse(
+                    status_code=404,
+                    content={"detail": "Not found"}
+                )
+            
+            # Serve index.html for all other routes (SPA routing)
+            return FileResponse("static/index.html")
+            
+    except RuntimeError:
+        # Static files not available (development mode)
+        pass
     
     return app
 
@@ -162,6 +159,7 @@ if __name__ == "__main__":
         "app.main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,
-        log_level=settings.log_level.lower()
+        reload=False,  # Security: Disable reload in production
+        log_level=settings.log_level.lower(),
+        proxy_headers=True  # Security: Enable proxy headers
     )

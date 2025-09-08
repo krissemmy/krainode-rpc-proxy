@@ -1,0 +1,242 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  
+  body {
+    @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700;
+  }
+  
+  .btn-outline {
+    @apply btn border border-gray-300 bg-transparent hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800;
+  }
+  
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900;
+  }
+  
+  .input {
+    @apply flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400;
+  }
+  
+  .textarea {
+    @apply flex min-h-[80px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400;
+  }
+  
+  .select {
+    @apply flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100;
+  }
+} */
+
+/* Custom scrollbar */
+/* ::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+} */
+
+/* Code syntax highlighting */
+/* .json-viewer {
+  @apply font-mono text-sm;
+}
+
+.json-key {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+.json-string {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.json-number {
+  @apply text-purple-600 dark:text-purple-400;
+}
+
+.json-boolean {
+  @apply text-orange-600 dark:text-orange-400;
+}
+
+.json-null {
+  @apply text-gray-500 dark:text-gray-400;
+} */
+
+/* Mobile responsiveness */
+/* :root { 
+  --container-max: 1200px; 
+}
+
+.container { 
+  max-width: var(--container-max); 
+  margin: 0 auto; 
+  padding: 0 1rem; 
+}
+
+img, svg { 
+  max-width: 100%; 
+  height: auto; 
+}
+
+.card { 
+  border: 1px solid rgba(255,255,255,.12); 
+  border-radius: 16px; 
+  background: rgba(255,255,255,.04); 
+}
+
+.grid { 
+  display: grid; 
+  gap: 1rem; 
+}
+
+@media (min-width: 640px){ 
+  .grid-sm-2 { 
+    grid-template-columns: repeat(2,1fr); 
+  } 
+}
+
+@media (min-width: 1024px){ 
+  .grid-lg-3 { 
+    grid-template-columns: repeat(3,1fr); 
+  } 
+}
+
+h1 { 
+  font-size: clamp(1.8rem, 3.6vw, 2.4rem); 
+}
+
+h2 { 
+  font-size: clamp(1.3rem, 2.8vw, 1.6rem); 
+}
+
+p, li, a { 
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem); 
+  line-height: 1.6; 
+}
+
+body { 
+  overflow-x: hidden; 
+} */
+
+/* index.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Base (colors, body, scroll) ---------- */
+@layer base {
+  * { @apply border-gray-200 dark:border-gray-700; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { @apply bg-gray-100 dark:bg-gray-800; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-500; }
+
+  /* Headings & text sizes that scale nicely */
+  h1 { font-size: clamp(1.8rem, 3.6vw, 2.4rem); }
+  h2 { font-size: clamp(1.3rem, 2.8vw, 1.6rem); }
+  p, li, a { font-size: clamp(0.95rem, 2.2vw, 1.05rem); line-height: 1.6; }
+}
+
+/* ---------- Components (buttons, cards, inputs) ---------- */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium
+           transition-colors focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary { @apply btn bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600; }
+  .btn-secondary { @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700; }
+  .btn-outline { @apply btn border border-gray-300 bg-transparent hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800; }
+
+  /* Solid card surface (light/dark) */
+  .card { @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900; }
+
+  /* Translucent panel for dark UIs (use this if you want the “glass” look) */
+  .panel { @apply rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm; }
+
+  .input { @apply h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500
+                   focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                   disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400; }
+  .textarea { @apply min-h-[80px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500
+                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                      disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400; }
+  .select { @apply h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm
+                    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                    disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100; }
+}
+
+/* ---------- Utilities (containers, grids, json colors) ---------- */
+@layer utilities {
+  :root { --container-max: 1200px; }
+
+  .container { max-width: var(--container-max); margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+
+  /* Responsive grids */
+  .grid-base { @apply grid gap-4; }
+  .grid-sm-2 { @apply grid-base; grid-template-columns: 1fr; }
+  .grid-lg-3 { @apply grid-base; grid-template-columns: 1fr; }
+  @media (min-width: 640px){ .grid-sm-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px){ .grid-lg-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* Flexible features layout that centers 1–N cards nicely */
+  .features-auto { @apply grid gap-4; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 1100px; margin-inline: auto; }
+
+  /* JSON syntax colors */
+  .json-viewer { @apply font-mono text-sm; }
+  .json-key { @apply text-blue-600 dark:text-blue-400; }
+  .json-string { @apply text-green-600 dark:text-green-400; }
+  .json-number { @apply text-purple-600 dark:text-purple-400; }
+  .json-boolean { @apply text-orange-600 dark:text-orange-400; }
+  .json-null { @apply text-gray-500 dark:text-gray-400; }
+  /* Force wrap for long, unbroken tokens (hex, base64, etc.) */
+  .json-wrap {
+    overflow-wrap: anywhere;   /* modern */
+    word-break: break-word;    /* fallback */
+  }
+}
+
+/* Images */
+img, svg { max-width: 100%; height: auto; }

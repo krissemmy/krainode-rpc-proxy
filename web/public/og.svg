@@ -1,0 +1,47 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#1f2937"/>
+  
+  <!-- Network nodes -->
+  <circle cx="100" cy="100" r="12" fill="#3B82F6" opacity="0.8"/>
+  <circle cx="200" cy="150" r="10" fill="#60A5FA" opacity="0.6"/>
+  <circle cx="300" cy="80" r="14" fill="#3B82F6" opacity="0.9"/>
+  <circle cx="400" cy="120" r="11" fill="#93C5FD" opacity="0.7"/>
+  <circle cx="500" cy="100" r="8" fill="#60A5FA" opacity="0.5"/>
+  <circle cx="600" cy="140" r="9" fill="#3B82F6" opacity="0.8"/>
+  <circle cx="700" cy="90" r="13" fill="#60A5FA" opacity="0.7"/>
+  <circle cx="800" cy="130" r="10" fill="#93C5FD" opacity="0.6"/>
+  <circle cx="900" cy="110" r="7" fill="#60A5FA" opacity="0.5"/>
+  <circle cx="1000" cy="120" r="9" fill="#3B82F6" opacity="0.8"/>
+  <circle cx="1100" cy="100" r="11" fill="#60A5FA" opacity="0.7"/>
+  
+  <!-- Connection lines -->
+  <path d="M100 100L200 150L300 80L400 120L500 100L600 140L700 90L800 130L900 110L1000 120L1100 100" stroke="#3B82F6" stroke-width="3" fill="none" opacity="0.6"/>
+  <path d="M200 150L300 80L400 120L500 100L600 140L700 90L800 130L900 110L1000 120L1100 100" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  
+  <!-- Central hub -->
+  <circle cx="600" cy="315" r="20" fill="#3B82F6" opacity="0.9"/>
+  <circle cx="600" cy="315" r="14" fill="white"/>
+  <circle cx="600" cy="315" r="7" fill="#3B82F6"/>
+  <circle cx="600" cy="315" r="3" fill="white"/>
+  
+  <!-- Hub connections -->
+  <path d="M100 100L600 315" stroke="#3B82F6" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M200 150L600 315" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M300 80L600 315" stroke="#93C5FD" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M400 120L600 315" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M500 100L600 315" stroke="#3B82F6" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M600 140L600 315" stroke="#93C5FD" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M700 90L600 315" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M800 130L600 315" stroke="#93C5FD" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M900 110L600 315" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M1000 120L600 315" stroke="#3B82F6" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M1100 100L600 315" stroke="#60A5FA" stroke-width="2" fill="none" opacity="0.4"/>
+  
+  <!-- Title -->
+  <text x="600" y="400" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">KraiNode</text>
+  <text x="600" y="450" font-family="Arial, sans-serif" font-size="24" fill="#93C5FD" text-anchor="middle">JSON-RPC Proxy</text>
+  <text x="600" y="490" font-family="Arial, sans-serif" font-size="18" fill="#60A5FA" text-anchor="middle">Proxy, test, and monitor JSON-RPC in minutes</text>
+  <text x="600" y="530" font-family="Arial, sans-serif" font-size="16" fill="#93C5FD" text-anchor="middle">https://krainode.com</text>
+  <text x="600" y="570" font-family="Arial, sans-serif" font-size="14" fill="#60A5FA" text-anchor="middle">FastAPI + Docker + Rate Limiting + Metrics</text>
+</svg>

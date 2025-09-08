@@ -1,5 +1,23 @@
-# KraiNode RPC Proxy - Backend Only
-FROM python:3.11-slim
+# Multi-stage build for KraiNode
+FROM node:18-alpine AS frontend-builder
+
+# Set working directory
+WORKDIR /app/web
+
+# Copy package files
+COPY web/package*.json ./
+
+# Install dependencies (including dev dependencies for build)
+RUN npm install
+
+# Copy source code
+COPY web/ ./
+
+# Build frontend
+RUN npm run build
+
+# Python backend stage
+FROM python:3.11-slim AS backend
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -24,6 +42,9 @@ RUN pip install --no-cache-dir -e .
 
 # Copy backend source code
 COPY backend/ ./
+
+# Copy built frontend from previous stage
+COPY --from=frontend-builder /app/web/dist ./static
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app \

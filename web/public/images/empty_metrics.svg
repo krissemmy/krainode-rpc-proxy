@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+
+<rect width="800" height="400" fill="#000000"/>
+<g transform="translate(80,80)">
+  <rect x="0" y="0" width="640" height="240" rx="18" fill="none" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="6" stroke-dasharray="16 10"/>
+  <text x="40" y="110" font-family="Inter, system-ui" font-size="28" fill="#ffffff" opacity="0.9">
+    No metrics yet.
+  </text>
+  <text x="40" y="150" font-family="Inter, system-ui" font-size="22" fill="#ffffff" opacity="0.65">
+    Send some requests and refresh your panel.
+  </text>
+</g>
+</svg>

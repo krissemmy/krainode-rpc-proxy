@@ -5,12 +5,14 @@ services:
       dockerfile: backend/Dockerfile
     expose:
       - "8000"
+    ports:
+      - "8000:8000"
     env_file:
       - .env
     environment:
       - SERVICE_NAME=krainode
       - LOG_LEVEL=INFO
-      - ALLOWED_ORIGINS=["https://krainode.krissemmy.com","https://localhost:3000"]
+      - ALLOWED_ORIGINS=["*"]
       - RATE_LIMIT_RPS=5
       - REQUEST_TIMEOUT_SECONDS=20
     volumes:
@@ -22,22 +24,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  caddy:
-    image: caddy:2
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      - EMAIL=${EMAIL}
-      - API_HOST=${API_HOST}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - api
-    restart: unless-stopped
   prometheus:
     image: prom/prometheus:latest
     ports:
@@ -73,5 +59,3 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
-  caddy_data:
-  caddy_config:

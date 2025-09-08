@@ -26,4 +26,4 @@ Format loosely follows Keep a Changelog. Versions use SemVer.
 ### Infra
 - 
 
-[0.1.0]: https://github.com/krissemmy/krainode-mvp/releases/tag/v0.1.0
+[0.1.0]: https://github.com/krissemmy/krainode-rpc-proxy/releases/tag/v0.1.0

@@ -37,6 +37,7 @@ KraiNode RPC Proxy is a complete solution that provides secure, rate-limited acc
 
 ### Prerequisites
 - Docker & Docker Compose
+- make
 
 ### Development Setup
 

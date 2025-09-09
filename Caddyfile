@@ -1,51 +1,43 @@
 {
-    email {$EMAIL}
-  
-    servers {
-      timeouts {
-        read_body   30s
-        read_header 30s
-        write       30s
-        idle        120s
-      }
-      # max_header_size 16kb   # (optional)
+  email {$EMAIL}
+
+  servers {
+    timeouts {
+      read_body   30s
+      read_header 30s
+      write       30s
+      idle        120s
     }
+    # max_header_size 16kb   # (optional)
+  }
 }
 
 # HTTPS for API
 {$API_HOST} {
-  encode zstd gzip
+encode zstd gzip
 
-  # (Optional) add CORS headers *here* if you want proxy-level CORS
-  # header Access-Control-Allow-Origin  https://{$GRAFANA_HOST}
-  # header Access-Control-Allow-Methods "POST, OPTIONS"
-  # header Access-Control-Allow-Headers "Content-Type"
+# (Optional) add CORS headers *here* if you want proxy-level CORS
+# header Access-Control-Allow-Origin  https://{$GRAFANA_HOST}
+# header Access-Control-Allow-Methods "POST, OPTIONS"
+# header Access-Control-Allow-Headers "Content-Type"
 
-  # CORS preflight (tweak origin/headers as you need)
-  @preflight method OPTIONS
-  header @preflight Access-Control-Allow-Origin "{http.request.header.Origin}"
-  # header @preflight Access-Control-Allow-Methods "POST, OPTIONS"
-  header @preflight Access-Control-Allow-Headers "Content-Type, X-API-Key"
-  header @preflight Access-Control-Max-Age "86400"
-  # respond @preflight 204
+# CORS preflight (tweak origin/headers as you need)
+@preflight method OPTIONS
+header @preflight Access-Control-Allow-Origin "{http.request.header.Origin}"
+# header @preflight Access-Control-Allow-Methods "POST, OPTIONS"
+header @preflight Access-Control-Allow-Headers "Content-Type, X-API-Key"
+header @preflight Access-Control-Max-Age "86400"
+# respond @preflight 204
 
-  # Proxy to your container network service
-  reverse_proxy api:8000 {
-    header_up X-Forwarded-Proto {scheme}
-    header_up X-Forwarded-Host  {host}
-    header_up X-Forwarded-For {remote_host}
-    header_up X-Real-IP {remote_host}
-  }
-  # Health check endpoint
-  handle_path /readyz    { reverse_proxy api:8000/readyz }
+# Proxy to your container network service
+reverse_proxy api:8000 {
+  header_up X-Forwarded-Proto {scheme}
+  header_up X-Forwarded-Host  {host}
+}
+# Health check endpoint
+handle_path /readyz    { reverse_proxy api:8000/readyz }
 
-  header {
-    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    X-Content-Type-Options "nosniff"
-    X-Frame-Options "DENY"
-    X-XSS-Protection "1; mode=block"
-    Referrer-Policy "strict-origin-when-cross-origin"
-    Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'"
-    Permissions-Policy "camera=(), microphone=(), geolocation=()"
-  }
+header {
+  Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+}
 }

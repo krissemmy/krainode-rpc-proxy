@@ -136,19 +136,6 @@ class PerChainRateLimiter:
         # Calculate retry delay
         retry_delay = (1.0 - bucket.tokens) / bucket.rate
         return False, max(0.0, retry_delay)
-    
-    def get_remaining_and_reset(self, client_ip: str, chain: str) -> Tuple[int, int]:
-        """Get remaining tokens and reset time for rate limit headers."""
-        key = self._get_key(client_ip, chain)
-        
-        if key not in self.buckets:
-            self.buckets[key] = TokenBucket(self.rate)
-        
-        bucket = self.buckets[key]
-        remaining = max(0, int(bucket.tokens))
-        reset_time = int(bucket.last_update + (1.0 / self.rate))
-        
-        return remaining, reset_time
 
 
 # Global rate limiter instance

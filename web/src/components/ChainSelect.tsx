@@ -1,12 +1,15 @@
 import { ChevronDown } from 'lucide-react'
 
-interface Chain {
-  slug: string
-  apiUrl: string
+interface ChainDetails {
+  name: string
+  networks: Array<{
+    name: string
+    apiUrl: string
+  }>
 }
 
 interface ChainSelectProps {
-  chains: Chain[]
+  chains: ChainDetails[]
   selectedChain: string
   onChainChange: (chain: string) => void
 }
@@ -20,8 +23,8 @@ export function ChainSelect({ chains, selectedChain, onChainChange }: ChainSelec
         className="select w-full appearance-none pr-10"
       >
         {chains.map((chain) => (
-          <option key={chain.slug} value={chain.slug}>
-            {chain.slug.charAt(0).toUpperCase() + chain.slug.slice(1)}
+          <option key={chain.name} value={chain.name}>
+            {chain.name.charAt(0).toUpperCase() + chain.name.slice(1)}
           </option>
         ))}
       </select>

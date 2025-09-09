@@ -97,7 +97,7 @@ async def rpc_forward(
                 "data": {
                     "status_code": 502,
                     "error_type": "connection_error",
-                    "details": f"Could not connect to upstream node"
+                    "details": f"Could not connect to upstream URL: {upstream_url}"
                 }
             },
             "meta": {

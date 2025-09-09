@@ -4,7 +4,6 @@ import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, Response, FileResponse
 import uvicorn
@@ -41,38 +40,19 @@ def create_app() -> FastAPI:
     
     app = FastAPI(
         title="KraiNode",
-        description="JSON-RPC proxy and playground",
+        description="JSON-RPC proxy with rate limiting and metrics",
         version="1.0.0",
         lifespan=lifespan
-    )
-    
-    # GZip middleware
-    app.add_middleware(
-        GZipMiddleware,
-        minimum_size=1000,
     )
     
     # CORS middleware
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_origins,
-        allow_credentials=False,  # Security: Disable credentials for CORS
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "X-API-Key"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
-    
-    # Request size limit middleware
-    @app.middleware("http")
-    async def limit_request_size(request: Request, call_next):
-        if request.headers.get("content-length"):
-            content_length = int(request.headers["content-length"])
-            if content_length > 10 * 1024 * 1024:  # 10MB limit
-                return JSONResponse(
-                    status_code=413,
-                    content={"detail": "Request too large"}
-                )
-        response = await call_next(request)
-        return response
     
     # Include routers
     app.include_router(rpc.router)
@@ -159,7 +139,6 @@ if __name__ == "__main__":
         "app.main:app",
         host="0.0.0.0",
         port=8000,
-        reload=False,  # Security: Disable reload in production
-        log_level=settings.log_level.lower(),
-        proxy_headers=True  # Security: Enable proxy headers
+        reload=True,
+        log_level=settings.log_level.lower()
     )

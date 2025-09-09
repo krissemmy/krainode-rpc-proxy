@@ -1,10 +1,8 @@
 ethereum:
   mainnet:
     publicnode: "https://ethereum-rpc.publicnode.com"
-    alchemy: "https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
   sepolia:
     publicnode: "https://ethereum-sepolia-rpc.publicnode.com"
-    alchemy: "https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY"
   holesky:
     publicnode: "https://ethereum-holesky-rpc.publicnode.com"
   hoodi:
@@ -12,12 +10,13 @@ ethereum:
 base:
   mainnet:
     publicnode: "https://base-rpc.publicnode.com"
-    alchemy: "https://base-mainnet.g.alchemy.com/v2/YOUR_KEY"
   sepolia:
     publicnode: "https://base-sepolia-rpc.publicnode.com"
 celo:
   mainnet:
     publicnode: "https://celo-rpc.publicnode.com"
+  alfajores:
+    celocommunity: "https://alfajores-rpc.celo-community.org"
 avail:
   mainnet:
     publicnode: "https://avail-rpc.publicnode.com"
@@ -26,27 +25,47 @@ avail:
 blast:
   mainnet:
     publicnode: "https://blast-rpc.publicnode.com"
+  sepolia:
+    blastapi: "https://blastl2-sepolia.public.blastapi.io"
 mantle:
   mainnet:
     publicnode: "https://mantle-rpc.publicnode.com"
+  sepolia:
+    mantlepublic: "https://rpc.sepolia.mantle.xyz/m"
 linea:
   mainnet:
     publicnode: "https://linea-rpc.publicnode.com"
+  sepolia:
+    publicnode: "https://linea-sepolia-rpc.publicnode.com"
 sei-evm:
   mainnet:
     publicnode: "https://sei-evm-rpc.publicnode.com"
+  testnet:
+    seichain: "https://unichain-sepolia-rpc.publicnode.com"
 scroll:
   mainnet:
     publicnode: "https://scroll-rpc.publicnode.com"
-arbitrum1:
-  mainnet:
+  sepolia:
+    publicnode: "https://scroll-sepolia-rpc.publicnode.com"
+arbitrum:
+  one:
     publicnode: "https://arbitrum-one-rpc.publicnode.com"
+  nova:
+    publicnode: "https://arbitrum-nova-rpc.publicnode.com"
+  sepolia:
+    publicnode: "https://arbitrum-sepolia-rpc.publicnode.com"
 avalanche-c-chain:
   mainnet:
     publicnode: "https://avalanche-c-chain-rpc.publicnode.com"
+  fuji:
+    publicnode: "https://avalanche-fuji-c-chain-rpc.publicnode.com"
 gnosis:
   mainnet:
     publicnode: "https://gnosis-rpc.publicnode.com"
+  chiado:
+    publicnode: "https://gnosis-chiado-rpc.publicnode.com"
 unichain:
   mainnet:
     publicnode: "https://unichain-rpc.publicnode.com"
+  sepolia:
+    publicnode: "https://unichain-sepolia-rpc.publicnode.com"

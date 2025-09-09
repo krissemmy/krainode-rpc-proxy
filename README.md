@@ -35,7 +35,30 @@ KraiNode RPC Proxy is a complete solution that provides secure, rate-limited acc
 
 ## 🚀 Quick Start
 
-### Using Docker Compose (Recommended)
+### Prerequisites
+- Docker & Docker Compose
+
+### Development Setup
+
+1. **Clone and Start development servers**:
+   ```bash
+   git clone https://github.com/krissemmy/krainode-rpc-proxy.git
+   cd krainode-rpc-proxy
+   make dev
+   ```
+
+### Available Commands
+
+```bash
+make help          # Show all available commands
+make dev           # Start all service using the docker-compose-dev.yml file
+make test         # Run test
+make docker-down   # Stop Docker Compose
+make clean         # Clean build artifacts. if running locally without docker
+make status        # Check service status
+```
+
+### For production environment. Using Docker Compose (Recommended)
 
 1. **Clone and setup**:
    ```bash
@@ -44,11 +67,8 @@ KraiNode RPC Proxy is a complete solution that provides secure, rate-limited acc
    cp env.example .env
    ```
 
-2. **Configure your chains** (edit `.env`):
+2. **Configure your ssl domain** (edit `.env`):
    ```bash
-   # Add your upstream RPC URLs, you can use public URLs or your private node URLs
-   CHAINS_JSON={"ethereum-mainnet":"https://ethereum-rpc.publicnode.com","arbitrum1":"https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"}
-   
    # Set your domain for SSL certificates
    EMAIL=your-email@example.com
    API_HOST=your-domain.com
@@ -202,49 +222,21 @@ Rate limiting is applied per IP address per chain:
 
 ## 🌐 Supported Chains
 
-Currently configured in `env.example` with PublicNode endpoints:
+Currently configured in `backend/chains.yml` with PublicNode endpoints:
 
-- **Ethereum Mainnet** (`ethereum-mainnet`)
-- **Base Mainnet** (`base-mainnet`)
-- **Celo Mainnet** (`celo-mainnet`)
-- **Avail Mainnet** (`avail-mainnet`)
-- **Blast Mainnet** (`blast-mainnet`)
-- **Mantle Mainnet** (`mantle-mainnet`)
-- **Linea Mainnet** (`linea-mainnet`)
-- **Sei EVM Mainnet** (`sei-evm-mainnet`)
-- **Scroll Mainnet** (`scroll-mainnet`)
-- **Arbitrum One** (`arbitrum1`)
+- **Ethereum Mainnet** (`ethereum`)
+- **Base Mainnet** (`base`)
+- **Celo Mainnet** (`celo`)
+- **Avail Mainnet** (`avail`)
+- **Blast Mainnet** (`blast`)
+- **Mantle Mainnet** (`mantle`)
+- **Linea Mainnet** (`linea`)
+- **Sei EVM Mainnet** (`sei-evm`)
+- **Scroll Mainnet** (`scroll`)
+- **Arbitrum One** (`arbitrum`)
 - **Avalanche C-Chain** (`avalanche-c-chain`)
-- **Gnosis Mainnet** (`gnosis-mainnet`)
-- **Unichain Mainnet** (`unichain-mainnet`)
-
-## 🛠️ Development
-
-### Prerequisites
-- Python 3.8+
-- Node.js 16+
-- Docker & Docker Compose
-
-### Development Setup
-
-1. **Clone and Start development servers**:
-   ```bash
-   git clone https://github.com/krissemmy/krainode-rpc-proxy.git
-   cd krainode-rpc-proxy
-   make dev
-   ```
-
-### Available Commands
-
-```bash
-make help          # Show all available commands
-make dev           # Start development servers
-make build         # Build frontend
-make docker-up     # Start with Docker Compose
-make docker-down   # Stop Docker Compose
-make clean         # Clean build artifacts
-make status        # Check service status
-```
+- **Gnosis Mainnet** (`gnosis`)
+- **Unichain Mainnet** (`unichain`)
 
 ## 🤝 Contributing
 

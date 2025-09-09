@@ -1,14 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { Play, Copy, Check, AlertCircle } from "lucide-react";
 import { ChainSelect } from "../components/ChainSelect";
+import { NetworkSelect } from "../components/NetworkSelect";
 import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelect";
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
 
-interface Chain {
-  slug: string;
+interface Network {
+  name: string;
   apiUrl: string;
+}
+
+interface ChainDetails {
+  name: string;
+  networks: Network[];
 }
 
 interface RpcRequest {
@@ -32,8 +38,9 @@ interface RpcResponse {
 }
 
 export function Playground() {
-  const [chains, setChains] = useState<Chain[]>([]);
+  const [chainDetails, setChainDetails] = useState<ChainDetails[]>([]);
   const [selectedChain, setSelectedChain] = useState<string>("ethereum");
+  const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
   const [selectedMethod, setSelectedMethod] = useState<string>("eth_blockNumber");
   const [params, setParams] = useState<any[]>([]);
   const [requestJson, setRequestJson] = useState<string>("");
@@ -45,10 +52,19 @@ export function Playground() {
   useEffect(() => {
     const loadChains = async () => {
       try {
-        const r = await fetch("/api/chains");
-        const data = await r.json();
-        setChains(data.chains);
-        if (data.chains.length > 0) setSelectedChain(data.chains[0].slug);
+        // Load detailed chain information
+        const detailsRes = await fetch("/api/chains/details");
+        const detailsData = await detailsRes.json();
+        
+        setChainDetails(detailsData.chains);
+        
+        if (detailsData.chains.length > 0) {
+          const firstChain = detailsData.chains[0];
+          setSelectedChain(firstChain.name);
+          if (firstChain.networks.length > 0) {
+            setSelectedNetwork(firstChain.networks[0].name);
+          }
+        }
       } catch (err) {
         console.error("Failed to load chains:", err);
         setError("Failed to load available chains");
@@ -56,6 +72,29 @@ export function Playground() {
     };
     loadChains();
   }, []);
+
+  // Get available networks for the selected chain
+  const availableNetworks = useMemo(() => {
+    const chainDetail = chainDetails.find((c: ChainDetails) => c.name === selectedChain);
+    return chainDetail?.networks || [];
+  }, [chainDetails, selectedChain]);
+
+  // Reset network selection when chain changes
+  useEffect(() => {
+    if (availableNetworks.length > 0) {
+      const networkExists = availableNetworks.some((n: Network) => n.name === selectedNetwork);
+      if (!networkExists) {
+        setSelectedNetwork(availableNetworks[0].name);
+      }
+    }
+  }, [selectedChain, availableNetworks, selectedNetwork]);
+
+  // Auto-select network when chain changes (especially for chains with single network)
+  useEffect(() => {
+    if (availableNetworks.length === 1) {
+      setSelectedNetwork(availableNetworks[0].name);
+    }
+  }, [availableNetworks]);
 
   const methodMap = useMemo(
     () => getMethodParamsForChain(selectedChain),
@@ -87,17 +126,24 @@ export function Playground() {
     setSelectedMethod(method);
     setParams(getMethodParamsForChain(selectedChain)[method] || []);
   };
+
   const handlePresetSelect = (method: string, presetParams: any[]) => {
     setSelectedMethod(method);
     setParams(presetParams);
   };
 
+  const handleNetworkChange = (network: string) => {
+    setSelectedNetwork(network);
+  };
+
+
   const handleSendRequest = async () => {
-    if (!selectedChain) { setError("Please select a chain"); return; }
+    if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
     setIsLoading(true); setError(null); setResponse(null);
     try {
       const requestBody = JSON.parse(requestJson);
-      const r = await fetch(`/api/rpc/${selectedChain}/json`, {
+      const chainSlug = `${selectedChain}-${selectedNetwork}`;
+      const r = await fetch(`/api/rpc/${chainSlug}/json`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
@@ -116,10 +162,11 @@ export function Playground() {
   };
 
   const handlePing = async () => {
-    if (!selectedChain) { setError("Please select a chain"); return; }
+    if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
     setIsLoading(true); setError(null); setResponse(null);
     try {
-      const r = await fetch(`/api/rpc/${selectedChain}/ping`);
+      const chainSlug = `${selectedChain}-${selectedNetwork}`;
+      const r = await fetch(`/api/rpc/${chainSlug}/ping`);
       const data = await r.json();
       if (r.ok) {
         setResponse({ jsonrpc: "2.0", id: 1, result: data.ok ? `Block: ${data.blockNumber}` : `Error: ${data.error}`, meta: { durationMs: data.durationMs } });
@@ -140,7 +187,7 @@ export function Playground() {
     catch (err) { console.error("Failed to copy:", err); }
   };
 
-  const selectedChainInfo = chains.find((c) => c.slug === selectedChain);
+  const selectedNetworkInfo = availableNetworks.find((n: Network) => n.name === selectedNetwork);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -156,13 +203,22 @@ export function Playground() {
             <div className="space-y-6">
               <div className="card">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Chain</h3>
-                <ChainSelect chains={chains} selectedChain={selectedChain} onChainChange={setSelectedChain} />
-                {selectedChainInfo && (
+                <ChainSelect chains={chainDetails} selectedChain={selectedChain} onChainChange={setSelectedChain} />
+              </div>
+
+              <div className="card">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Network</h3>
+                <NetworkSelect 
+                  networks={availableNetworks} 
+                  selectedNetwork={selectedNetwork} 
+                  onNetworkChange={handleNetworkChange} 
+                />
+                {selectedNetworkInfo && (
                   <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your API URL:</div>
                     <div className="font-mono text-sm text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                      <span className="truncate">{selectedChainInfo.apiUrl}</span>
-                      <button onClick={() => copyToClipboard(selectedChainInfo.apiUrl)} className="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded" title="Copy URL">
+                      <span className="truncate">{selectedNetworkInfo.apiUrl}</span>
+                      <button onClick={() => copyToClipboard(selectedNetworkInfo.apiUrl)} className="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded" title="Copy URL">
                         {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-gray-500" />}
                       </button>
                     </div>
@@ -191,10 +247,10 @@ export function Playground() {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Request</h3>
                   <div className="flex items-center space-x-2">
-                    <button onClick={handleSendRequest} disabled={isLoading || !selectedChain} className="btn-primary flex items-center text-sm">
+                    <button onClick={handleSendRequest} disabled={isLoading || !selectedChain || !selectedNetwork} className="btn-primary flex items-center text-sm">
                       {isLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : (<><Play className="w-4 h-4 mr-2" />Send Request</>)}
                     </button>
-                    <button onClick={handlePing} disabled={isLoading || !selectedChain} className="btn-outline flex items-center text-sm">
+                    <button onClick={handlePing} disabled={isLoading || !selectedChain || !selectedNetwork} className="btn-outline flex items-center text-sm">
                       {isLoading ? <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" /> : (<><Play className="w-4 h-4 mr-2" />Ping</>)}
                     </button>
                     <button onClick={() => copyToClipboard(requestJson)} className="btn-outline flex items-center text-sm">

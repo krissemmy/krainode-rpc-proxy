@@ -7,7 +7,7 @@ name = "krainode"
 version = "1.0.0"
 description = "JSON-RPC proxy with rate limiting and metrics"
 authors = [
-    {name = "KraiNode Team", email = "contact@krissemmy.com"}
+    {name = "KraiNode Team", email = "team@krainode.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.8"
@@ -21,6 +21,7 @@ dependencies = [
     "structlog>=23.0.0",
     "python-multipart>=0.0.6",
     "pydantic-settings>=2.0.0",
+    "pyyaml>=6.0.0",
 ]
 
 [project.optional-dependencies]

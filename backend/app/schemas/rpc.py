@@ -68,10 +68,38 @@ class ChainInfo(BaseModel):
     apiUrl: str = Field(..., description="Our API URL for this chain")
 
 
+class ProviderInfo(BaseModel):
+    """Schema for provider information."""
+    
+    name: str = Field(..., description="Provider name")
+    url: str = Field(..., description="Provider URL")
+
+
+class NetworkInfo(BaseModel):
+    """Schema for network information."""
+    
+    name: str = Field(..., description="Network name")
+    providers: List[ProviderInfo] = Field(..., description="Available providers")
+    apiUrl: str = Field(..., description="Our API URL for this network")
+
+
+class ChainDetails(BaseModel):
+    """Schema for detailed chain information."""
+    
+    name: str = Field(..., description="Chain name")
+    networks: List[NetworkInfo] = Field(..., description="Available networks")
+
+
 class ChainsResponse(BaseModel):
     """Response schema for chains endpoint."""
     
     chains: List[ChainInfo] = Field(..., description="List of available chains")
+
+
+class ChainsDetailsResponse(BaseModel):
+    """Response schema for detailed chains endpoint."""
+    
+    chains: List[ChainDetails] = Field(..., description="Detailed chain information")
 
 
 class HealthResponse(BaseModel):

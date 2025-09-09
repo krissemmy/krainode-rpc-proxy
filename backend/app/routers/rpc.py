@@ -7,10 +7,10 @@ from fastapi.responses import JSONResponse
 
 from ..config import get_settings
 from ..rpc import rpc_forward, resolve_upstream, ping_chain
-from ..rate_limit import check_rate_limit, get_rate_limiter
+from ..rate_limit import check_rate_limit
 from ..metrics import record_request
 from ..logging import RequestContext, log_rpc_request
-from ..schemas.rpc import JsonRpcRequest, JsonRpcResponse, PingResponse, ChainsResponse, ChainInfo
+from ..schemas.rpc import JsonRpcRequest, JsonRpcResponse, PingResponse, ChainsResponse, ChainInfo, ChainsDetailsResponse, ChainDetails, NetworkInfo, ProviderInfo
 
 router = APIRouter()
 
@@ -29,6 +29,38 @@ async def get_chains():
     ]
     
     return ChainsResponse(chains=chains)
+
+
+@router.get("/api/chains/details", response_model=ChainsDetailsResponse)
+async def get_chains_details():
+    """Get detailed hierarchical chain information."""
+    settings = get_settings()
+    
+    chains = []
+    for chain_name, networks in settings.get_available_chain_networks().items():
+        network_infos = []
+        for network_name in networks:
+            providers = settings.get_available_providers(chain_name, network_name)
+            provider_infos = [
+                ProviderInfo(
+                    name=provider_name,
+                    url=settings.get_upstream_url_with_provider(chain_name, network_name, provider_name)
+                )
+                for provider_name in providers
+            ]
+            
+            network_infos.append(NetworkInfo(
+                name=network_name,
+                providers=provider_infos,
+                apiUrl=f"/api/rpc/{chain_name}-{network_name}/json"
+            ))
+        
+        chains.append(ChainDetails(
+            name=chain_name,
+            networks=network_infos
+        ))
+    
+    return ChainsDetailsResponse(chains=chains)
 
 
 @router.get("/api/rpc/{chain}/ping", response_model=PingResponse)
@@ -61,22 +93,7 @@ async def ping_chain_endpoint(chain: str, request: Request):
                 error_type=None if result["ok"] else "ping_error"
             )
             
-            # Add rate limit headers
-            response = PingResponse(**result)
-            rate_limiter = get_rate_limiter()
-            remaining, reset_time = rate_limiter.get_remaining_and_reset(
-                request.client.host if hasattr(request.client, 'host') else 'unknown', 
-                chain
-            )
-            
-            return JSONResponse(
-                content=response.dict(),
-                headers={
-                    "X-RateLimit-Limit": str(get_settings().rate_limit_rps),
-                    "X-RateLimit-Remaining": str(remaining),
-                    "X-RateLimit-Reset": str(reset_time)
-                }
-            )
+            return PingResponse(**result)
             
         except HTTPException as e:
             # Log the error
@@ -191,21 +208,9 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
                 error_type=None if status_code == 200 else "upstream_error"
             )
             
-            # Add rate limit headers
-            rate_limiter = get_rate_limiter()
-            remaining, reset_time = rate_limiter.get_remaining_and_reset(
-                request.client.host if hasattr(request.client, 'host') else 'unknown', 
-                chain
-            )
-            
             return JSONResponse(
                 status_code=status_code,
-                content=response_body,
-                headers={
-                    "X-RateLimit-Limit": str(get_settings().rate_limit_rps),
-                    "X-RateLimit-Remaining": str(remaining),
-                    "X-RateLimit-Reset": str(reset_time)
-                }
+                content=response_body
             )
             
         except HTTPException as e:

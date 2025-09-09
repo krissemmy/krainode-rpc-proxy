@@ -1,0 +1,52 @@
+ethereum:
+  mainnet:
+    publicnode: "https://ethereum-rpc.publicnode.com"
+    alchemy: "https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+  sepolia:
+    publicnode: "https://ethereum-sepolia-rpc.publicnode.com"
+    alchemy: "https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY"
+  holesky:
+    publicnode: "https://ethereum-holesky-rpc.publicnode.com"
+  hoodi:
+    publicnode: "https://ethereum-hoodi-rpc.publicnode.com"
+base:
+  mainnet:
+    publicnode: "https://base-rpc.publicnode.com"
+    alchemy: "https://base-mainnet.g.alchemy.com/v2/YOUR_KEY"
+  sepolia:
+    publicnode: "https://base-sepolia-rpc.publicnode.com"
+celo:
+  mainnet:
+    publicnode: "https://celo-rpc.publicnode.com"
+avail:
+  mainnet:
+    publicnode: "https://avail-rpc.publicnode.com"
+  testnet-turing:
+    publicnode: "https://avail-turing-rpc.publicnode.com"
+blast:
+  mainnet:
+    publicnode: "https://blast-rpc.publicnode.com"
+mantle:
+  mainnet:
+    publicnode: "https://mantle-rpc.publicnode.com"
+linea:
+  mainnet:
+    publicnode: "https://linea-rpc.publicnode.com"
+sei-evm:
+  mainnet:
+    publicnode: "https://sei-evm-rpc.publicnode.com"
+scroll:
+  mainnet:
+    publicnode: "https://scroll-rpc.publicnode.com"
+arbitrum1:
+  mainnet:
+    publicnode: "https://arbitrum-one-rpc.publicnode.com"
+avalanche-c-chain:
+  mainnet:
+    publicnode: "https://avalanche-c-chain-rpc.publicnode.com"
+gnosis:
+  mainnet:
+    publicnode: "https://gnosis-rpc.publicnode.com"
+unichain:
+  mainnet:
+    publicnode: "https://unichain-rpc.publicnode.com"

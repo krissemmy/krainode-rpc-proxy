@@ -10,7 +10,7 @@ export default function Team() {
         <p style={{ marginTop: 8 }}>
           KraiNode is a developer-first JSON-RPC proxy and playground. It standardizes calls across public
           nodes, forwards server-side with strict timeouts and retries, and gives teams real-time visibility
-          into error rates and latency without exposing upstream URLs.
+          into error rates and latency—without exposing upstream URLs.
         </p>
       </div>
 
@@ -19,8 +19,12 @@ export default function Team() {
         <section className="card" style={{ padding: 20 }}>
           <h2 style={{ marginTop: 0 }}>Roadmap (post-MVP)</h2>
           <ul style={{ paddingLeft: 18, margin: 0 }}>
-            <li>Testnets support and more EVM chains</li>
-            <li>Non-EVM chains support</li>
+            <li>More EVM chains and Non-EVM chains support</li>
+            <li>Advanced dashboard with analytics</li>
+            <li>Load balancing across multiple upstream nodes</li>
+            <li>Caching layer for frequently requested data</li>
+            <li>API key management</li>
+            <li>AI chatbot integration for non-devs to analyze blockchain data</li>
           </ul>
         </section>
 
@@ -34,39 +38,43 @@ export default function Team() {
         </section>
       </div>
 
+      {/* Sponsor card (full width) */}
+      <section className="card" style={{ padding: 20, marginBottom: 16 }}>
+        <h2 style={{ marginTop: 0 }}>Support KraiNode</h2>
+        <p style={{ margin: "8px 0 12px" }}>
+          If KraiNode helps ur DX, u can sponsor to keep the lights on 🙏
+        </p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <iframe
+            src="https://github.com/sponsors/krissemmy/card"
+            title="Sponsor krissemmy"
+            height="225"
+            width="100%"
+            loading="lazy"
+            style={{ border: 0, maxWidth: 600 }}
+          />
+        </div>
+      </section>
+
+
       {/* Founder card (full width) */}
       <section className="card" style={{ padding: 20 }}>
         <h2 className="mb-2" style={{ marginTop: 0 }}>Founder</h2>
         <div className="founder-grid">
           <div>
-            <p style={{ marginTop: 0 }}>
-              <strong>Hey, I’m Emmanuel Christopher.</strong> I’m a DevOps & blockchain data engineer who’s run
-              multi-chain node infra (Ethereum, Arbitrum, Base and more), built custom indexing systems, and shipped
-              monitoring that teams trust.
+            <p>
+              <strong>Emmanuel Christopher</strong> is a DevOps &amp; Blockchain Data Engineer who has operated
+              high-availability node infrastructure and indexing systems across multiple chains, 
+              built observability
+              stacks (Grafana, Loki, Prometheus), and tuned Cloud latency and cost for production DeFi workloads.
             </p>
-
-            <ul style={{ paddingLeft: 18, margin: "12px 0" }}>
-              <li>Cut RPC p95 latency from ~2s to &lt;250ms across regions by fixing routing, timeouts, retries and network paths.</li>
-              <li>Built end-to-end observability: Prometheus metrics, Grafana dashboards, Loki logs, alerting, SLIs/SLOs.</li>
-              <li>Reduced AWS spend by ~48% with right-sizing, Savings Plans and egress control.</li>
-              <li>Delivered API gateways that handle high RPS with safe retries, circuit breakers and clear error surfaces.</li>
-            </ul>
-
-            <p className="italic" style={{ margin: "12px 0" }}>
-              Why now: public RPCs are inconsistent, status pages look green while calls fail, and teams waste hours
-              debugging timeouts. KraiNode gives one predictable endpoint, real latency numbers, safe retries and privacy
-              for upstream URLs.
-            </p>
-
-            <p style={{ marginBottom: 0 }}>
-              I’m building <strong>KraiNode</strong> so JSON-RPC feels boring in a good way: predictable, fast, and easy to debug,
-              with a playground that mirrors production.
+            <p className="italic mt-2">
+              He created KraiNode to make JSON-RPC predictable and easy to debug — a clean proxy with a playground that mirrors production.
             </p>
           </div>
           <div className="founder-links">
             <a className="btn" href="https://github.com/krissemmy" target="_blank" rel="noreferrer">GitHub</a>
             <a className="btn-secondary" href="https://linkedin.com/in/emmanuel-christopher" target="_blank" rel="noreferrer">LinkedIn</a>
-            <a className="btn-secondary" href="https://twitter.com/chris__emma" target="_blank" rel="noreferrer">X (Twitter)</a>
             <a className="btn-secondary" href="mailto:contact@krissemmy.com">Email</a>
           </div>
         </div>

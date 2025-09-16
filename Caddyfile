@@ -29,14 +29,17 @@
   header @preflight Access-Control-Max-Age "86400"
   # respond @preflight 204
 
+  # --- Health endpoints at the EDGE ---
+  @ready path /readyz
+  @live  path /healthz
+  respond @ready 200
+  respond @live  200
+
   # Proxy to your container network service
   reverse_proxy api:8000 {
     header_up X-Real-IP {remote_host}
   }
-  # Health check endpoint
-  handle_path /readyz    { 
-    reverse_proxy api:8000/readyz 
-  }
+
 
   header {
     Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
@@ -47,9 +50,9 @@
     Content-Security-Policy "
       default-src 'self';
       img-src 'self' https: data:;
-      script-src 'self' 'unsafe-inline';
+      script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
       style-src 'self' 'unsafe-inline';
-      connect-src 'self';
+      connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com;
       frame-src https://github.com https://*.github.com;
       child-src https://github.com https://*.github.com;
     "

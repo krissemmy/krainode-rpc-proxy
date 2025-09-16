@@ -59,7 +59,7 @@ def create_app() -> FastAPI:
     
     @app.api_route("/readyz", methods=["GET","HEAD"])
     def readyz():
-        return {"ok": True}
+        return Response(status_code=200, content="ok")
 
     # Health check endpoint
     @app.get("/healthz", response_model=HealthResponse)

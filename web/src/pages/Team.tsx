@@ -19,12 +19,12 @@ export default function Team() {
         <section className="card" style={{ padding: 20 }}>
           <h2 style={{ marginTop: 0 }}>Roadmap (post-MVP)</h2>
           <ul style={{ paddingLeft: 18, margin: 0 }}>
-            <li>More EVM chains and Non-EVM chains support</li>
             <li>Advanced dashboard with analytics</li>
             <li>Load balancing across multiple upstream nodes</li>
             <li>Caching layer for frequently requested data</li>
             <li>API key management</li>
             <li>AI chatbot integration for non-devs to analyze blockchain data</li>
+            <li>More EVM chains and Non-EVM chains support</li>
           </ul>
         </section>
 
@@ -39,7 +39,7 @@ export default function Team() {
       </div>
 
       {/* Sponsor card (full width) */}
-      <section className="card" style={{ padding: 20, marginBottom: 16 }}>
+      {/* <section className="card" style={{ padding: 20, marginBottom: 16 }}>
         <h2 style={{ marginTop: 0 }}>Support KraiNode</h2>
         <p style={{ margin: "8px 0 12px" }}>
           If KraiNode helps ur DX, u can sponsor to keep the lights on 🙏
@@ -54,8 +54,7 @@ export default function Team() {
             style={{ border: 0, maxWidth: 600 }}
           />
         </div>
-      </section>
-
+      </section> */}
 
       {/* Founder card (full width) */}
       <section className="card" style={{ padding: 20 }}>

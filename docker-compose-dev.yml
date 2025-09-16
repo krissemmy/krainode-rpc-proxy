@@ -15,7 +15,6 @@ services:
       - ALLOWED_ORIGINS=["*"]
       - RATE_LIMIT_RPS=5
       - REQUEST_TIMEOUT_SECONDS=20
-      - CHAINS_CONFIG_FILE=chains.yaml
     volumes:
       - ./logs:/app/logs
       - ./backend/chains.yaml:/app/chains.yaml:ro

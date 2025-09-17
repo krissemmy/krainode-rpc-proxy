@@ -53,6 +53,7 @@ install: ## Install dependencies
 
 setup: ## Initial setup
 	cp env.example .env
+	cd krainode-rpc-proxy/web && cp env.example .env
 	@echo "Edit .env file with your configuration"
 	@echo "Then run 'make install' to install dependencies"
 

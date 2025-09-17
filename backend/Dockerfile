@@ -15,9 +15,6 @@ COPY web/package*.json ./
 # Install dependencies (including dev dependencies for build)
 RUN npm install
 
-# Copy environment file
-COPY web/.env* ./
-
 # Copy source code
 COPY web/ ./
 

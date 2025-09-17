@@ -1,6 +1,11 @@
 # Multi-stage build for KraiNode
 FROM node:18-alpine AS frontend-builder
 
+# Accept build arguments for frontend environment variables
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_API_BASE
+
 # Set working directory
 WORKDIR /app/web
 
@@ -10,8 +15,16 @@ COPY web/package*.json ./
 # Install dependencies (including dev dependencies for build)
 RUN npm install
 
+# Copy environment file
+COPY web/.env* ./
+
 # Copy source code
 COPY web/ ./
+
+# Set environment variables for build
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+ENV VITE_API_BASE=$VITE_API_BASE
 
 # Build frontend
 RUN npm run build

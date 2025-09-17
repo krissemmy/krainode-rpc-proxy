@@ -6,6 +6,7 @@ import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelec
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
+import { apiRequest } from "../lib/api";
 
 interface Network {
   name: string;
@@ -53,8 +54,7 @@ export function Playground() {
     const loadChains = async () => {
       try {
         // Load detailed chain information
-        const detailsRes = await fetch("/api/chains/details");
-        const detailsData = await detailsRes.json();
+        const detailsData = await apiRequest("/api/chains/details");
         
         setChainDetails(detailsData.chains);
         
@@ -142,20 +142,11 @@ export function Playground() {
     setIsLoading(true); setError(null); setResponse(null);
     try {
       const requestBody = JSON.parse(requestJson);
-      const chainSlug = `${selectedChain}-${selectedNetwork}`;
-      const r = await fetch(`/api/rpc/${chainSlug}/json`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+      const data = await apiRequest(`/api/rpc/${selectedChain}/${selectedNetwork}/json`, {
+        method: "POST",
         body: JSON.stringify(requestBody),
       });
-      const data = await r.json();
-      if (r.ok) setResponse(data);
-      else {
-        if (data.error) {
-          const msg = data.error.message || "Unknown error";
-          const details = data.error.data ? ` (${data.error.data.error_type}: ${data.error.data.details})` : "";
-          setError(`${msg}${details}`);
-        } else setError(data.detail || `HTTP ${r.status}: ${r.statusText}`);
-      }
+      setResponse(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Request failed");
     } finally { setIsLoading(false); }
@@ -165,18 +156,8 @@ export function Playground() {
     if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
     setIsLoading(true); setError(null); setResponse(null);
     try {
-      const chainSlug = `${selectedChain}-${selectedNetwork}`;
-      const r = await fetch(`/api/rpc/${chainSlug}/ping`);
-      const data = await r.json();
-      if (r.ok) {
-        setResponse({ jsonrpc: "2.0", id: 1, result: data.ok ? `Block: ${data.blockNumber}` : `Error: ${data.error}`, meta: { durationMs: data.durationMs } });
-      } else {
-        if (data.error) {
-          const msg = data.error.message || "Unknown error";
-          const details = data.error.data ? ` (${data.error.data.error_type}: ${data.error.data.details})` : "";
-          setError(`${msg}${details}`);
-        } else setError(data.detail || `HTTP ${r.status}: ${r.statusText}`);
-      }
+      const data = await apiRequest(`/api/rpc/${selectedChain}/${selectedNetwork}/ping`);
+      setResponse({ jsonrpc: "2.0", id: 1, result: data.ok ? `Block: ${data.blockNumber}` : `Error: ${data.error}`, meta: { durationMs: data.durationMs } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ping failed");
     } finally { setIsLoading(false); }

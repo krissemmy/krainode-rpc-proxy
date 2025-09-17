@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Moon, Sun, LogOut, User } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 export default function NavBar() {
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const loc = useLocation();
+  const navigate = useNavigate();
 
   // Lock background scroll when drawer is open
   useEffect(() => {
@@ -24,6 +27,29 @@ export default function NavBar() {
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
   }, []);
+
+  // Check auth state
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   const toggleTheme = () => {
     const next = !dark;
@@ -59,8 +85,34 @@ export default function NavBar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-4 text-sm">
             {link("/", "Home")}
-            {link("/playground", "Playground")}
+            {user ? (
+              <>
+                {link("/playground", "Playground")}
+                {link("/history", "History")}
+              </>
+            ) : (
+              <>
+                <Link to="/signin" className="px-2 py-1 rounded-md text-gray-300 hover:text-white">
+                  Sign In
+                </Link>
+                <Link to="/signup" className="px-2 py-1 rounded-md text-gray-300 hover:text-white">
+                  Sign Up
+                </Link>
+              </>
+            )}
             {link("/team", "Team")}
+            {user && (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-300 text-xs">{user.email}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="p-2 rounded-lg text-gray-300 hover:text-white"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             <button
               onClick={toggleTheme}
               aria-label="Toggle theme"
@@ -119,12 +171,47 @@ export default function NavBar() {
               <Link to="/" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
                 Home
               </Link>
-              <Link to="/playground" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
-                Playground
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/playground" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
+                    Playground
+                  </Link>
+                  <Link to="/history" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
+                    History
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/signin" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
+                    Sign In
+                  </Link>
+                  <Link to="/signup" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
+                    Sign Up
+                  </Link>
+                </>
+              )}
               <Link to="/team" onClick={() => setOpen(false)} className="px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
                 Team
               </Link>
+
+              {user && (
+                <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    {user.email}
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setOpen(false);
+                    }}
+                    className="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
 
               <button
                 onClick={toggleTheme}

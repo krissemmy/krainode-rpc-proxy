@@ -62,9 +62,29 @@ prod-build: ## Build for production
 
 prod-run: ## Run production container
 	docker run -p 8000:8000 \
-		-e CHAINS_JSON='{"ethereum":"https://ethereum-rpc.publicnode.com"}' \
+		-e CHAINS_CONFIG_FILE=chains.yaml \
 		-e RATE_LIMIT_RPS=10 \
 		krainode:latest
+
+staging-build: ## Build for staging (same as production but with staging env)
+	docker build -f backend/Dockerfile -t krainode:staging .
+
+staging-run: ## Run staging container
+	docker run -p 8000:8000 \
+		-e CHAINS_CONFIG_FILE=chains.yaml \
+		-e RATE_LIMIT_RPS=10 \
+		-e API_HOST=staging.krainode.krissemmy.com \
+		krainode:staging
+
+staging-deploy: ## Deploy to staging environment
+	@echo "Deploying to staging environment..."
+	@echo "Make sure to update your .env file with staging values:"
+	@echo "  - API_HOST=staging.krainode.krissemmy.com"
+	@echo "  - SUPABASE_PROJECT_ID=your_project_id"
+	@echo "  - VITE_SUPABASE_URL=https://your-project-id.supabase.co"
+	@echo "  - VITE_SUPABASE_ANON_KEY=your_supabase_anon_key"
+	@echo "  - DATABASE_URL=your_database_url"
+	docker compose up --build -d
 
 check: ## Check system requirements
 	@echo "Checking system requirements..."
@@ -76,6 +96,6 @@ check: ## Check system requirements
 status: ## Show service status
 	@echo "Checking service status..."
 	@curl -s http://localhost:8000/healthz >/dev/null && echo "✅ Backend is running" || echo "❌ Backend is not running"
-	@curl -s http://localhost:3000 >/dev/null && echo "✅ Frontend is running" || echo "❌ Frontend is not running"
+	@curl -s http://localhost:8000 >/dev/null && echo "✅ Frontend is running" || echo "❌ Frontend is not running"
 	@curl -s http://localhost:9090 >/dev/null && echo "✅ Prometheus is running" || echo "❌ Prometheus is not running"
 	@curl -s http://localhost:3000 >/dev/null && echo "✅ Grafana is running" || echo "❌ Grafana is not running"

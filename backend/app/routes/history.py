@@ -55,6 +55,9 @@ async def list_history(
       limit :limit
     """
 
+    if not SessionLocal:
+        return {"data": [], "next_cursor": None, "error": "Database not available"}
+
     async with SessionLocal() as s:
         rows = (await s.execute(text(sql), params)).mappings().all()
 

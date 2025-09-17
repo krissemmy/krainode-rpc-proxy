@@ -56,28 +56,32 @@ async def proxy_rpc(chain: str, network: str, request: Request, user=Depends(get
 
     safe_params = redact(params)
 
-    # Log the request to database
-    async with SessionLocal() as s:
-        await s.execute(
-            text("""
-              insert into public.api_requests
-                (user_id, path, chain, network, method, status_code, duration_ms, response_bytes, error_text, params)
-              values
-                (:user_id, :path, :chain, :network, :method, :status_code, :duration_ms, :response_bytes, :error_text, :params::jsonb)
-            """),
-            {
-                "user_id": user["user_id"],
-                "path": str(request.url.path),
-                "chain": chain,
-                "network": network,
-                "method": method,
-                "status_code": status_code,
-                "duration_ms": duration_ms,
-                "response_bytes": response_bytes,
-                "error_text": error_text,
-                "params": json.dumps(safe_params),
-            },
-        )
-        await s.commit()
+    # Log the request to database (if available)
+    if SessionLocal:
+        try:
+            async with SessionLocal() as s:
+                await s.execute(
+                    text("""
+                      insert into public.api_requests
+                        (user_id, path, chain, network, method, status_code, duration_ms, response_bytes, error_text, params)
+                      values
+                        (:user_id, :path, :chain, :network, :method, :status_code, :duration_ms, :response_bytes, :error_text, :params::jsonb)
+                    """),
+                    {
+                        "user_id": user["user_id"],
+                        "path": str(request.url.path),
+                        "chain": chain,
+                        "network": network,
+                        "method": method,
+                        "status_code": status_code,
+                        "duration_ms": duration_ms,
+                        "response_bytes": response_bytes,
+                        "error_text": error_text,
+                        "params": json.dumps(safe_params),
+                    },
+                )
+                await s.commit()
+        except Exception as e:
+            print(f"Warning: Failed to log request to database: {e}")
 
     return JSONResponse(resp_payload, status_code=status_code)

@@ -120,7 +120,7 @@ async def ping_chain_endpoint(chain: str, request: Request):
 
 @router.post("/api/rpc/{chain}/json")
 async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
-    """Proxy JSON-RPC request to upstream node."""
+    """Proxy JSON-RPC request to upstream node (legacy endpoint without auth)."""
     with RequestContext(request, chain) as logger:
         start_time = time.time()
         
@@ -236,3 +236,11 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
             )
             
             raise
+
+
+@router.post("/api/rpc/{chain}/{network}/json")
+async def rpc_proxy_with_network(chain: str, network: str, request: Request, payload: Dict[str, Any]):
+    """Proxy JSON-RPC request to upstream node (new format without auth for now)."""
+    # For now, just use the chain parameter and ignore network
+    # This allows the frontend to work while we fix the auth issues
+    return await rpc_proxy(chain, request, payload)

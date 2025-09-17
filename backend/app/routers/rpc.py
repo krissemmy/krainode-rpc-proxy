@@ -231,7 +231,7 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any], user=
                     # Redact sensitive parameters
                     safe_params = rpc_request.params or []
                     if isinstance(safe_params, list):
-                        safe_params = [param for param in safe_params if not any(key.lower() in ['privatekey', 'private_key', 'pk', 'secret', 'bearer', 'authorization', 'auth', 'token', 'password', 'passwd'] for key in (param.keys() if isinstance(param, dict) else [])]
+                        safe_params = [param for param in safe_params if not any(key.lower() in ['privatekey', 'private_key', 'pk', 'secret', 'bearer', 'authorization', 'auth', 'token', 'password', 'passwd'] for key in (param.keys() if isinstance(param, dict) else []))]
                     
                     # Calculate response size
                     response_bytes = len(json.dumps(response_body).encode("utf-8"))

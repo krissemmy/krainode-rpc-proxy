@@ -14,7 +14,6 @@ from .metrics import get_metrics
 from .routers import rpc
 from .routes.auth_echo import router as me_router
 from .routes.history import router as history_router
-from .handlers.rpc import router as rpc_handler_router
 from .schemas.rpc import HealthResponse
 
 
@@ -61,7 +60,6 @@ def create_app() -> FastAPI:
     app.include_router(rpc.router)
     app.include_router(me_router)
     app.include_router(history_router)
-    app.include_router(rpc_handler_router)
     
     @app.api_route("/readyz", methods=["GET","HEAD"])
     def readyz():

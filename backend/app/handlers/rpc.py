@@ -68,9 +68,11 @@ async def proxy_rpc(chain: str, network: str, request: Request, user=Depends(get
         method = rpc_request.method
         params = rpc_request.params or []
         
-        # Resolve upstream URL (using chain only for now, ignoring network)
+        # Resolve upstream URL (combine chain and network)
         try:
-            upstream_url = await resolve_upstream(chain)
+            # Combine chain and network to match the expected format
+            chain_slug = f"{chain}-{network}"
+            upstream_url = await resolve_upstream(chain_slug)
         except HTTPException as e:
             return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
 

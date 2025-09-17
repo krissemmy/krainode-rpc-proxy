@@ -142,7 +142,7 @@ export function Playground() {
     setIsLoading(true); setError(null); setResponse(null);
     try {
       const requestBody = JSON.parse(requestJson);
-      const data = await apiRequest(`/api/rpc/${selectedChain}/${selectedNetwork}/json`, {
+      const data = await apiRequest(`/api/rpc/${selectedChain}-${selectedNetwork}/json`, {
         method: "POST",
         body: JSON.stringify(requestBody),
       });
@@ -156,7 +156,7 @@ export function Playground() {
     if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
     setIsLoading(true); setError(null); setResponse(null);
     try {
-      const data = await apiRequest(`/api/rpc/${selectedChain}/${selectedNetwork}/ping`);
+      const data = await apiRequest(`/api/rpc/${selectedChain}-${selectedNetwork}/ping`);
       setResponse({ jsonrpc: "2.0", id: 1, result: data.ok ? `Block: ${data.blockNumber}` : `Error: ${data.error}`, meta: { durationMs: data.durationMs } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ping failed");

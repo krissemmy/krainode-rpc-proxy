@@ -11,8 +11,20 @@ from ..rate_limit import check_rate_limit
 from ..metrics import record_request
 from ..logging import RequestContext, log_rpc_request
 from ..schemas.rpc import JsonRpcRequest, JsonRpcResponse, PingResponse, ChainsResponse, ChainInfo, ChainsDetailsResponse, ChainDetails, NetworkInfo, ProviderInfo
+from ..auth import get_current_user
+from ..db import SessionLocal
+from sqlalchemy import text
+import json
 
 router = APIRouter()
+
+
+def get_current_user_optional():
+    """Optional authentication - returns user if authenticated, None otherwise."""
+    try:
+        return get_current_user()
+    except HTTPException:
+        return None
 
 
 @router.get("/api/chains", response_model=ChainsResponse)
@@ -52,7 +64,7 @@ async def get_chains_details():
             network_infos.append(NetworkInfo(
                 name=network_name,
                 providers=provider_infos,
-                apiUrl=f"/api/rpc/{chain_name}/{network_name}/json"
+                apiUrl=f"/api/rpc/{chain_name}-{network_name}/json"
             ))
         
         chains.append(ChainDetails(
@@ -119,7 +131,7 @@ async def ping_chain_endpoint(chain: str, request: Request):
 
 
 @router.post("/api/rpc/{chain}/json")
-async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
+async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any], user=Depends(get_current_user_optional)):
     """Proxy JSON-RPC request to upstream node (legacy endpoint without auth)."""
     with RequestContext(request, chain) as logger:
         start_time = time.time()
@@ -208,6 +220,50 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
                 error_type=None if status_code == 200 else "upstream_error"
             )
             
+            # Log to database if user is authenticated
+            if user and SessionLocal:
+                try:
+                    # Parse chain to extract chain and network
+                    chain_parts = chain.split('-', 1)
+                    chain_name = chain_parts[0] if chain_parts else chain
+                    network_name = chain_parts[1] if len(chain_parts) > 1 else 'mainnet'
+                    
+                    # Redact sensitive parameters
+                    safe_params = rpc_request.params or []
+                    if isinstance(safe_params, list):
+                        safe_params = [param for param in safe_params if not any(key.lower() in ['privatekey', 'private_key', 'pk', 'secret', 'bearer', 'authorization', 'auth', 'token', 'password', 'passwd'] for key in (param.keys() if isinstance(param, dict) else [])]
+                    
+                    # Calculate response size
+                    response_bytes = len(json.dumps(response_body).encode("utf-8"))
+                    error_text = None
+                    if isinstance(response_body, dict) and "error" in response_body:
+                        error_text = response_body["error"].get("message", "Unknown error")
+                    
+                    async with SessionLocal() as s:
+                        await s.execute(
+                            text("""
+                              insert into public.api_requests
+                                (user_id, path, chain, network, method, status_code, duration_ms, response_bytes, error_text, params)
+                              values
+                                (:user_id, :path, :chain, :network, :method, :status_code, :duration_ms, :response_bytes, :error_text, :params::jsonb)
+                            """),
+                            {
+                                "user_id": user["user_id"],
+                                "path": str(request.url.path),
+                                "chain": chain_name,
+                                "network": network_name,
+                                "method": rpc_request.method,
+                                "status_code": status_code,
+                                "duration_ms": int(duration_ms),
+                                "response_bytes": response_bytes,
+                                "error_text": error_text,
+                                "params": json.dumps(safe_params),
+                            },
+                        )
+                        await s.commit()
+                except Exception as e:
+                    print(f"Warning: Failed to log request to database: {e}")
+            
             return JSONResponse(
                 status_code=status_code,
                 content=response_body
@@ -237,5 +293,3 @@ async def rpc_proxy(chain: str, request: Request, payload: Dict[str, Any]):
             
             raise
 
-
-# Removed conflicting route - now handled by app/handlers/rpc.py with authentication

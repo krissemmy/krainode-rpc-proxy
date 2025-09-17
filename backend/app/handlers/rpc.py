@@ -18,12 +18,10 @@ router = APIRouter()
 
 def get_current_user_optional():
     """Optional authentication - returns user if authenticated, None otherwise."""
-    def _get_user():
-        try:
-            return get_current_user()
-        except HTTPException:
-            return None
-    return Depends(_get_user)
+    try:
+        return get_current_user()
+    except HTTPException:
+        return None
 
 # Sensitive keys to redact from params
 SENSITIVE_KEYS = {
@@ -42,7 +40,7 @@ def redact(obj: Any) -> Any:
 
 
 @router.post("/api/rpc/{chain}/{network}/json")
-async def proxy_rpc(chain: str, network: str, request: Request, user=Depends(get_current_user_optional())):
+async def proxy_rpc(chain: str, network: str, request: Request, user=Depends(get_current_user_optional)):
     """Proxy JSON-RPC request with authentication and logging."""
     start_time = time.perf_counter()
     

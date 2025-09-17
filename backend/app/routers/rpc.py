@@ -52,7 +52,7 @@ async def get_chains_details():
             network_infos.append(NetworkInfo(
                 name=network_name,
                 providers=provider_infos,
-                apiUrl=f"/api/rpc/{chain_name}-{network_name}/json"
+                apiUrl=f"/api/rpc/{chain_name}/{network_name}/json"
             ))
         
         chains.append(ChainDetails(

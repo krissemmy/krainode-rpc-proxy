@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiRequest } from "@/lib/api";
+import { apiRequest } from "../lib/api";
 
 interface ApiRequest {
   id: number;

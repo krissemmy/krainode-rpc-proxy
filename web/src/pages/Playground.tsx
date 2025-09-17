@@ -6,7 +6,7 @@ import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelec
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
-import { apiRequest } from "@/lib/api";
+import { apiRequest } from "../lib/api";
 
 interface Network {
   name: string;

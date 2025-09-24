@@ -15,6 +15,8 @@ base:
 celo:
   mainnet:
     publicnode: "https://celo-rpc.publicnode.com"
+  sepolia:
+    tatum: "https://celo-sepolia.gateway.tatum.io"
   alfajores:
     celocommunity: "https://alfajores-rpc.celo-community.org"
 avail:

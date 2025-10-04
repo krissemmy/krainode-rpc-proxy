@@ -4,7 +4,8 @@ interface ChainDetails {
   name: string
   networks: Array<{
     name: string
-    apiUrl: string
+    providers: Array<{ name: string; url: string }>
+    defaultProvider: string
   }>
 }
 

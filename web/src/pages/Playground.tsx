@@ -1,15 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
-import { Play, Copy, Check, AlertCircle } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Play, Copy, Check, AlertCircle, Activity, History, Trash2, Loader2 } from "lucide-react";
 import { ChainSelect } from "../components/ChainSelect";
 import { NetworkSelect } from "../components/NetworkSelect";
+import { ProviderSelect } from "../components/ProviderSelect";
 import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelect";
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
+import { rpcFetch, type RpcBody } from "../lib/rpc";
+import { probeEndpoint } from "../lib/probe";
+
+interface Provider {
+  name: string;
+  url: string;
+}
 
 interface Network {
   name: string;
-  apiUrl: string;
+  providers: Provider[];
+  defaultProvider: string;
 }
 
 interface ChainDetails {
@@ -17,114 +26,326 @@ interface ChainDetails {
   networks: Network[];
 }
 
-interface RpcRequest {
-  jsonrpc: string;
-  method: string;
-  params: any[];
-  id: number;
+interface ChainsDetailsResponse {
+  chains: ChainDetails[];
 }
 
-interface RpcResponse {
-  jsonrpc: string;
-  id: number;
-  result?: any;
-  error?: {
-    code: number;
-    message: string;
-  };
-  meta?: {
-    durationMs: number;
-  };
+interface RecentRun {
+  endpointUrl: string;
+  method: string;
+  timestamp: number;
+  ok: boolean;
 }
+
+const STORAGE_KEYS = {
+  chain: "krainode:lastChain",
+  network: "krainode:lastNetwork",
+  provider: "krainode:lastProvider",
+  customUrl: "krainode:customUrl",
+  customHeaders: "krainode:customHeaders",
+  recent: "krainode:recent"
+} as const;
+
+const MAX_RECENT = 25;
 
 export function Playground() {
   const [chainDetails, setChainDetails] = useState<ChainDetails[]>([]);
-  const [selectedChain, setSelectedChain] = useState<string>("ethereum");
-  const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
+  const [chainsLoading, setChainsLoading] = useState(true);
+  const [chainsError, setChainsError] = useState<string | null>(null);
+
+  const [selectedChain, setSelectedChain] = useState<string>("");
+  const [selectedNetwork, setSelectedNetwork] = useState<string>("");
+  const [providerName, setProviderName] = useState<string>("");
+  const [customUrl, setCustomUrl] = useState<string>("");
+  const [customInput, setCustomInput] = useState<string>("");
+  const [customHeaders, setCustomHeaders] = useState<string>("");
+  const [customHeadersInput, setCustomHeadersInput] = useState<string>("");
+
   const [selectedMethod, setSelectedMethod] = useState<string>("eth_blockNumber");
   const [params, setParams] = useState<any[]>([]);
   const [requestJson, setRequestJson] = useState<string>("");
-  const [response, setResponse] = useState<RpcResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [responseData, setResponseData] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const [probeResult, setProbeResult] = useState<{ ok: boolean; label: string } | null>(null);
+  const [isProbing, setIsProbing] = useState(false);
+
+  const [recentRuns, setRecentRuns] = useState<RecentRun[]>([]);
+
+  const copyTimeoutRef = useRef<number>();
+  const initialProviderSyncRef = useRef(true);
+  const previousNetworkRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const loadChains = async () => {
+    if (typeof window === "undefined") return;
+    const storedChain = window.localStorage.getItem(STORAGE_KEYS.chain);
+    const storedNetwork = window.localStorage.getItem(STORAGE_KEYS.network);
+    const storedProvider = window.localStorage.getItem(STORAGE_KEYS.provider);
+    const storedCustom = window.localStorage.getItem(STORAGE_KEYS.customUrl);
+    const storedCustomHeaders = window.localStorage.getItem(STORAGE_KEYS.customHeaders);
+    const storedRecent = window.localStorage.getItem(STORAGE_KEYS.recent);
+
+    if (storedChain) setSelectedChain(storedChain);
+    if (storedNetwork) setSelectedNetwork(storedNetwork);
+    if (storedProvider) setProviderName(storedProvider);
+    if (storedCustom) {
+      setCustomUrl(storedCustom);
+      setCustomInput(storedCustom);
+    }
+    if (storedCustomHeaders) {
+      setCustomHeaders(storedCustomHeaders);
+      setCustomHeadersInput(storedCustomHeaders);
+    }
+    if (storedRecent) {
       try {
-        // Load detailed chain information
-        const detailsRes = await fetch("/api/chains/details");
-        const detailsData = await detailsRes.json();
-        
-        setChainDetails(detailsData.chains);
-        
-        if (detailsData.chains.length > 0) {
-          const firstChain = detailsData.chains[0];
-          setSelectedChain(firstChain.name);
-          if (firstChain.networks.length > 0) {
-            setSelectedNetwork(firstChain.networks[0].name);
-          }
+        const parsed = JSON.parse(storedRecent) as RecentRun[];
+        if (Array.isArray(parsed)) {
+          setRecentRuns(parsed.slice(0, MAX_RECENT));
         }
       } catch (err) {
-        console.error("Failed to load chains:", err);
-        setError("Failed to load available chains");
+        console.warn("Failed to parse stored recents", err);
       }
-    };
-    loadChains();
+    }
   }, []);
 
-  // Get available networks for the selected chain
+  useEffect(() => {
+    let cancelled = false;
+    const loadChains = async () => {
+      setChainsLoading(true);
+      setChainsError(null);
+      try {
+        const detailsData = await fetch("/chains.json");
+        if (!detailsData.ok) throw new Error(`HTTP ${detailsData.status}`);
+        const body = (await detailsData.json()) as ChainsDetailsResponse;
+        if (!cancelled) {
+          setChainDetails(Array.isArray(body?.chains) ? body.chains : []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to load chains:", err);
+          setChainsError("Failed to load available chains.");
+          setChainDetails([]);
+        }
+      } finally {
+        if (!cancelled) setChainsLoading(false);
+      }
+    };
+    void loadChains();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (chainDetails.length === 0) {
+      setSelectedChain("");
+      setSelectedNetwork("");
+      return;
+    }
+    const chainNames = chainDetails.map((chain) => chain.name);
+    if (!chainNames.includes(selectedChain)) {
+      setSelectedChain(chainDetails[0].name);
+      return;
+    }
+    const chain = chainDetails.find((c) => c.name === selectedChain);
+    if (!chain) return;
+    if (chain.networks.length === 0) {
+      setSelectedNetwork("");
+      return;
+    }
+    const networkNames = chain.networks.map((network) => network.name);
+    if (!networkNames.includes(selectedNetwork)) {
+      setSelectedNetwork(chain.networks[0].name);
+    }
+  }, [chainDetails, selectedChain, selectedNetwork]);
+
   const availableNetworks = useMemo(() => {
-    const chainDetail = chainDetails.find((c: ChainDetails) => c.name === selectedChain);
-    return chainDetail?.networks || [];
+    const chain = chainDetails.find((c) => c.name === selectedChain);
+    return chain?.networks ?? [];
   }, [chainDetails, selectedChain]);
 
-  // Reset network selection when chain changes
-  useEffect(() => {
-    if (availableNetworks.length > 0) {
-      const networkExists = availableNetworks.some((n: Network) => n.name === selectedNetwork);
-      if (!networkExists) {
-        setSelectedNetwork(availableNetworks[0].name);
-      }
-    }
-  }, [selectedChain, availableNetworks, selectedNetwork]);
+  const selectedNetworkInfo = useMemo(() => {
+    return availableNetworks.find((network) => network.name === selectedNetwork);
+  }, [availableNetworks, selectedNetwork]);
 
-  // Auto-select network when chain changes (especially for chains with single network)
   useEffect(() => {
-    if (availableNetworks.length === 1) {
-      setSelectedNetwork(availableNetworks[0].name);
+    const net = selectedNetworkInfo;
+    if (!net) {
+      setProviderName("");
+      return;
     }
-  }, [availableNetworks]);
+    const defaultName = net.defaultProvider || net.providers[0]?.name || "";
+    if (initialProviderSyncRef.current) {
+      initialProviderSyncRef.current = false;
+      if (!providerName || !net.providers.some((p) => p.name === providerName)) {
+        setProviderName(defaultName);
+      }
+      previousNetworkRef.current = net.name;
+      return;
+    }
+    if (previousNetworkRef.current !== net.name) {
+      previousNetworkRef.current = net.name;
+      setProviderName(defaultName);
+      setCustomUrl("");
+      setCustomInput("");
+      setCustomHeaders("");
+      setCustomHeadersInput("");
+      setProbeResult(null);
+      return;
+    }
+    if (!net.providers.some((p) => p.name === providerName)) {
+      setProviderName(defaultName);
+    }
+  }, [selectedNetworkInfo, providerName]);
+
+  useEffect(() => {
+    const methods = Object.keys(getMethodParamsForChain(selectedChain));
+    if (methods.length === 0) return;
+    if (methods.includes(selectedMethod)) {
+      setParams(getMethodParamsForChain(selectedChain)[selectedMethod] || []);
+    } else {
+      const first = methods[0];
+      setSelectedMethod(first);
+      setParams(getMethodParamsForChain(selectedChain)[first] || []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChain]);
+
+  useEffect(() => {
+    const request: RpcBody = { jsonrpc: "2.0", method: selectedMethod, params, id: 1 };
+    setRequestJson(JSON.stringify(request, null, 2));
+  }, [selectedMethod, params]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (selectedChain) window.localStorage.setItem(STORAGE_KEYS.chain, selectedChain);
+  }, [selectedChain]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (selectedNetwork) window.localStorage.setItem(STORAGE_KEYS.network, selectedNetwork);
+  }, [selectedNetwork]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (providerName) window.localStorage.setItem(STORAGE_KEYS.provider, providerName);
+  }, [providerName]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (customUrl) {
+      window.localStorage.setItem(STORAGE_KEYS.customUrl, customUrl);
+    } else {
+      window.localStorage.removeItem(STORAGE_KEYS.customUrl);
+    }
+  }, [customUrl]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (customHeaders) {
+      window.localStorage.setItem(STORAGE_KEYS.customHeaders, customHeaders);
+    } else {
+      window.localStorage.removeItem(STORAGE_KEYS.customHeaders);
+    }
+  }, [customHeaders]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (recentRuns.length > 0) {
+      window.localStorage.setItem(STORAGE_KEYS.recent, JSON.stringify(recentRuns.slice(0, MAX_RECENT)));
+    } else {
+      window.localStorage.removeItem(STORAGE_KEYS.recent);
+    }
+  }, [recentRuns]);
 
   const methodMap = useMemo(
     () => getMethodParamsForChain(selectedChain),
     [selectedChain]
   );
 
-  useEffect(() => {
-    const methods = Object.keys(methodMap);
-    if (methods.length === 0) return;
-  
-    if (methods.includes(selectedMethod)) {
-      // keep current method, just swap its example params for this chain
-      setParams(methodMap[selectedMethod] || []);
-    } else {
-      // pick the first method for this chain
-      const first = methods[0];
-      setSelectedMethod(first);
-      setParams(methodMap[first] || []);
+  const effectiveUrl = useMemo(() => {
+    if (customUrl.trim()) return customUrl.trim();
+    const net = selectedNetworkInfo;
+    if (!net) return "";
+    const provider = net.providers.find((p) => p.name === providerName) ?? net.providers[0];
+    return provider?.url ?? "";
+  }, [customUrl, providerName, selectedNetworkInfo]);
+
+  const responseResult = useMemo(() => {
+    if (!responseData || typeof responseData !== "object") return undefined;
+    if (Array.isArray(responseData)) {
+      const first = responseData[0];
+      if (first && typeof first === "object" && "result" in first) {
+        return (first as Record<string, unknown>).result;
+      }
+      return undefined;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChain, methodMap]);
+    if ("result" in (responseData as Record<string, unknown>)) {
+      return (responseData as Record<string, unknown>).result;
+    }
+    return undefined;
+  }, [responseData]);
 
-  useEffect(() => {
-    const request: RpcRequest = { jsonrpc: "2.0", method: selectedMethod, params, id: 1 };
-    setRequestJson(JSON.stringify(request, null, 2));
-  }, [selectedMethod, params]);
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = window.setTimeout(() => setCopiedField(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
-  const handleMethodChange = (method: string) => {
-    setSelectedMethod(method);
-    setParams(getMethodParamsForChain(selectedChain)[method] || []);
+  const recordRecent = (ok: boolean, method: string, endpointUrl: string) => {
+    if (!endpointUrl) return;
+    setRecentRuns((prev) => {
+      const entry: RecentRun = { endpointUrl, method, ok, timestamp: Date.now() };
+      return [entry, ...prev].slice(0, MAX_RECENT);
+    });
+  };
+
+  const handleSendRequest = async () => {
+    if (!effectiveUrl) {
+      setError("Select a chain, network, and provider or supply a custom URL.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    setResponseData(null);
+    try {
+      const parsed = JSON.parse(requestJson) as RpcBody | RpcBody[];
+      if ((typeof parsed !== "object" || parsed === null) && !Array.isArray(parsed)) {
+        throw new Error("Request must be a JSON object or array.");
+      }
+      const headers = customUrl && customHeaders ? parseHeaders(customHeaders) : undefined;
+      const rpcResult = await rpcFetch(effectiveUrl, parsed, 40000, headers);
+      const methodName = Array.isArray(parsed)
+        ? (parsed[0]?.method as string | undefined) ?? selectedMethod
+        : ((parsed as RpcBody).method ?? selectedMethod);
+      if (rpcResult.ok) {
+        setResponseData(rpcResult.data);
+        recordRecent(true, methodName, effectiveUrl);
+      } else {
+        const friendly =
+          rpcResult.error.kind === "network_or_cors"
+            ? "Network blocked (CORS or offline)."
+            : rpcResult.error.kind === "timeout"
+              ? "Request timed out."
+              : rpcResult.error.message;
+        setError(friendly);
+        recordRecent(false, methodName, effectiveUrl);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Invalid JSON request.";
+      setError(message === "Unexpected end of JSON input" ? "Invalid JSON in request body." : message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePresetSelect = (method: string, presetParams: any[]) => {
@@ -132,62 +353,73 @@ export function Playground() {
     setParams(presetParams);
   };
 
-  const handleNetworkChange = (network: string) => {
-    setSelectedNetwork(network);
+  const applyCustomUrl = () => {
+    const trimmed = customInput.trim();
+    setCustomUrl(trimmed);
+    if (!trimmed) {
+      setProbeResult(null);
+      setCustomHeaders("");
+      setCustomHeadersInput("");
+    }
   };
 
+  const applyCustomHeaders = () => {
+    const trimmed = customHeadersInput.trim();
+    setCustomHeaders(trimmed);
+  };
 
-  const handleSendRequest = async () => {
-    if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
-    setIsLoading(true); setError(null); setResponse(null);
+  const parseHeaders = (headersString: string): Record<string, string> | undefined => {
+    if (!headersString.trim()) return undefined;
     try {
-      const requestBody = JSON.parse(requestJson);
-      const chainSlug = `${selectedChain}-${selectedNetwork}`;
-      const r = await fetch(`/api/rpc/${chainSlug}/json`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-      const data = await r.json();
-      if (r.ok) setResponse(data);
-      else {
-        if (data.error) {
-          const msg = data.error.message || "Unknown error";
-          const details = data.error.data ? ` (${data.error.data.error_type}: ${data.error.data.details})` : "";
-          setError(`${msg}${details}`);
-        } else setError(data.detail || `HTTP ${r.status}: ${r.statusText}`);
+      const parsed = JSON.parse(headersString);
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed;
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Request failed");
-    } finally { setIsLoading(false); }
+    } catch (e) {
+      // Invalid JSON, return undefined
+    }
+    return undefined;
   };
 
-  const handlePing = async () => {
-    if (!selectedChain || !selectedNetwork) { setError("Please select a chain and network"); return; }
-    setIsLoading(true); setError(null); setResponse(null);
+  const handleProbe = async () => {
+    if (!effectiveUrl) return;
+    setIsProbing(true);
+    setProbeResult(null);
     try {
-      const chainSlug = `${selectedChain}-${selectedNetwork}`;
-      const r = await fetch(`/api/rpc/${chainSlug}/ping`);
-      const data = await r.json();
-      if (r.ok) {
-        setResponse({ jsonrpc: "2.0", id: 1, result: data.ok ? `Block: ${data.blockNumber}` : `Error: ${data.error}`, meta: { durationMs: data.durationMs } });
-      } else {
-        if (data.error) {
-          const msg = data.error.message || "Unknown error";
-          const details = data.error.data ? ` (${data.error.data.error_type}: ${data.error.data.details})` : "";
-          setError(`${msg}${details}`);
-        } else setError(data.detail || `HTTP ${r.status}: ${r.statusText}`);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Ping failed");
-    } finally { setIsLoading(false); }
+      const headers = customUrl && customHeaders ? parseHeaders(customHeaders) : undefined;
+      const result = await probeEndpoint(effectiveUrl, 10000, headers);
+      setProbeResult(result);
+    } finally {
+      setIsProbing(false);
+    }
   };
 
-  const copyToClipboard = async (text: string) => {
-    try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }
-    catch (err) { console.error("Failed to copy:", err); }
+  const clearLocalData = () => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEYS.chain);
+      window.localStorage.removeItem(STORAGE_KEYS.network);
+      window.localStorage.removeItem(STORAGE_KEYS.provider);
+      window.localStorage.removeItem(STORAGE_KEYS.customUrl);
+      window.localStorage.removeItem(STORAGE_KEYS.customHeaders);
+      window.localStorage.removeItem(STORAGE_KEYS.recent);
+    }
+    setRecentRuns([]);
+    setCustomUrl("");
+    setCustomInput("");
+    setCustomHeaders("");
+    setCustomHeadersInput("");
+    setProbeResult(null);
+    initialProviderSyncRef.current = true;
+    previousNetworkRef.current = null;
+    if (chainDetails[0]) {
+      setSelectedChain(chainDetails[0].name);
+      const firstNetwork = chainDetails[0].networks[0]?.name ?? "";
+      setSelectedNetwork(firstNetwork);
+    } else {
+      setSelectedChain("");
+      setSelectedNetwork("");
+    }
   };
-
-  const selectedNetworkInfo = availableNetworks.find((n: Network) => n.name === selectedNetwork);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -195,34 +427,157 @@ export function Playground() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">JSON-RPC Playground</h1>
-            <p className="text-gray-600 dark:text-gray-300">Test JSON-RPC methods against your KraiNode proxy endpoints</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Run JSON-RPC calls directly from your browser. Pick a chain, choose a provider, or paste any HTTP/HTTPS endpoint.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left */}
             <div className="space-y-6">
               <div className="card">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Chain</h3>
                 <ChainSelect chains={chainDetails} selectedChain={selectedChain} onChainChange={setSelectedChain} />
+                {chainsLoading && (
+                  <p className="mt-3 text-sm text-muted-foreground">Loading chain list…</p>
+                )}
+                {chainsError && (
+                  <p className="mt-3 text-sm text-red-500">{chainsError}</p>
+                )}
               </div>
 
-              <div className="card">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Network</h3>
-                <NetworkSelect 
-                  networks={availableNetworks} 
-                  selectedNetwork={selectedNetwork} 
-                  onNetworkChange={handleNetworkChange} 
+              <div className="card space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Network</h3>
+                  <button
+                    onClick={clearLocalData}
+                    className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Clear local data
+                  </button>
+                </div>
+                <NetworkSelect
+                  networks={availableNetworks}
+                  selectedNetwork={selectedNetwork}
+                  onNetworkChange={(network) => {
+                    setSelectedNetwork(network);
+                    setProbeResult(null);
+                  }}
                 />
-                {selectedNetworkInfo && (
-                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your API URL:</div>
-                    <div className="font-mono text-sm text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                      <span className="truncate">{selectedNetworkInfo.apiUrl}</span>
-                      <button onClick={() => copyToClipboard(selectedNetworkInfo.apiUrl)} className="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded" title="Copy URL">
-                        {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-gray-500" />}
+
+                {selectedNetworkInfo ? (
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Provider</div>
+                      <ProviderSelect
+                        providers={selectedNetworkInfo.providers}
+                        selectedName={providerName}
+                        onChange={(name) => {
+                          setProviderName(name);
+                          setCustomUrl("");
+                          setCustomInput("");
+                          setCustomHeaders("");
+                          setCustomHeadersInput("");
+                          setProbeResult(null);
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="custom-url" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Custom URL
+                      </label>
+                      <div className="mt-1 flex flex-col gap-2 sm:flex-row">
+                        <input
+                          id="custom-url"
+                          type="url"
+                          placeholder="http://localhost:8545 or https://<ur-custom-rpc-endpoint.com>"
+                          value={customInput}
+                          onChange={(e) => setCustomInput(e.target.value)}
+                          className="input flex-1"
+                        />
+                        <button
+                          onClick={applyCustomUrl}
+                          className="btn-outline text-sm"
+                        >
+                          Use
+                        </button>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Leave blank to use the selected provider. HTTP and HTTPS endpoints supported.
+                      </p>
+                    </div>
+
+                    {customUrl && (
+                      <div>
+                        <label htmlFor="custom-headers" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Custom Headers (Optional)
+                        </label>
+                        <div className="mt-1 flex flex-col gap-2 sm:flex-row">
+                          <textarea
+                            id="custom-headers"
+                            placeholder='{"x-api-key": "your-api-key", "Authorization": "Bearer token"}'
+                            value={customHeadersInput}
+                            onChange={(e) => setCustomHeadersInput(e.target.value)}
+                            className="input flex-1 min-h-[80px] font-mono text-sm"
+                            rows={3}
+                          />
+                          <button
+                            onClick={applyCustomHeaders}
+                            className="btn-outline text-sm self-start"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          JSON format. Only used when custom URL is set. Leave empty if API key is in URL.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <button
+                        onClick={handleProbe}
+                        disabled={!effectiveUrl || isProbing}
+                        className="btn-outline inline-flex items-center text-sm"
+                      >
+                        {isProbing ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Activity className="mr-2 h-4 w-4" />
+                        )}
+                        Probe endpoint
                       </button>
+                      {probeResult && (
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                            probeResult.ok
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                          }`}
+                        >
+                          {probeResult.label}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your API URL:</div>
+                      <div className="font-mono text-sm text-gray-900 dark:text-gray-100 flex items-center justify-between gap-2">
+                        <span className="truncate">{effectiveUrl || "Select a provider"}</span>
+                        {effectiveUrl && (
+                          <button
+                            onClick={() => copyToClipboard(effectiveUrl, "url")}
+                            className="ml-2 inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:bg-gray-200 dark:hover:bg-gray-700"
+                          >
+                            {copiedField === "url" ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No networks available.</p>
                 )}
               </div>
 
@@ -231,7 +586,10 @@ export function Playground() {
                 <MethodSelect
                   chain={selectedChain}
                   selectedMethod={selectedMethod}
-                  onMethodChange={handleMethodChange}
+                  onMethodChange={(method) => {
+                    setSelectedMethod(method);
+                    setParams(methodMap[method] || []);
+                  }}
                 />
               </div>
 
@@ -241,20 +599,28 @@ export function Playground() {
               </div>
             </div>
 
-            {/* Right */}
             <div className="lg:col-span-2 space-y-6">
               <div className="card">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Request</h3>
                   <div className="flex items-center space-x-2">
-                    <button onClick={handleSendRequest} disabled={isLoading || !selectedChain || !selectedNetwork} className="btn-primary flex items-center text-sm">
-                      {isLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : (<><Play className="w-4 h-4 mr-2" />Send Request</>)}
+                    <button
+                      onClick={handleSendRequest}
+                      disabled={isLoading || !effectiveUrl}
+                      className="btn-primary flex items-center text-sm"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Play className="w-4 h-4 mr-2" />
+                      )}
+                      Send Request
                     </button>
-                    <button onClick={handlePing} disabled={isLoading || !selectedChain || !selectedNetwork} className="btn-outline flex items-center text-sm">
-                      {isLoading ? <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" /> : (<><Play className="w-4 h-4 mr-2" />Ping</>)}
-                    </button>
-                    <button onClick={() => copyToClipboard(requestJson)} className="btn-outline flex items-center text-sm">
-                      {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />} Copy
+                    <button
+                      onClick={() => copyToClipboard(requestJson, "request")}
+                      className="btn-outline flex items-center text-sm"
+                    >
+                      {copiedField === "request" ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />} Copy
                     </button>
                   </div>
                 </div>
@@ -266,9 +632,12 @@ export function Playground() {
               <div className="card">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Response</h3>
-                  {response && (
-                    <button onClick={() => copyToClipboard(JSON.stringify(response, null, 2))} className="btn-outline flex items-center text-sm">
-                      {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />} Copy
+                  {responseData && (responseData as any) && (
+                    <button
+                      onClick={() => copyToClipboard(JSON.stringify(responseData, null, 2), "response")}
+                      className="btn-outline flex items-center text-sm"
+                    >
+                      {copiedField === "response" ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />} Copy
                     </button>
                   )}
                 </div>
@@ -283,44 +652,82 @@ export function Playground() {
                   </div>
                 )}
 
-                {response && (
+                {responseData && (responseData as any) && (
                   <div className="space-y-4">
-                    {typeof response.result !== "undefined" && (
+                    {typeof responseResult !== "undefined" && responseResult !== null && (
                       <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Result</div>
                         <div className="font-mono text-[13px] break-all">
-                          {String(response.result)}
-                          {typeof response.result === "string" && /^0x[0-9a-fA-F]+$/.test(response.result) && (
-                            <span className="opacity-80"> (dec: {parseInt(response.result, 16)})</span>
+                          {selectedMethod === "eth_blockNumber" && typeof responseResult === "string" && /^0x[0-9a-fA-F]+$/.test(responseResult) ? (
+                            <span>Block Number: {parseInt(responseResult, 16).toLocaleString()}</span>
+                          ) : (
+                            <>
+                              {String(responseResult)}
+                              {typeof responseResult === "string" && /^0x[0-9a-fA-F]+$/.test(responseResult) && (
+                                <span className="opacity-80"> (dec: {parseInt(responseResult, 16)})</span>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
                     )}
 
                     <div className="max-h-[50vh] overflow-auto">
-                      <JsonViewer data={response} collapsed={1} showRootSummary={false} />
+                      <JsonViewer data={responseData} collapsed={1} showRootSummary={false} />
                     </div>
-
-                    {response.meta && (
-                      <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          Duration: <span className="font-mono">{response.meta.durationMs}ms</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
-                {!response && !error && !isLoading && (
+                {!responseData && !error && !isLoading && (
                   <div className="text-center py-12 text-gray-500 dark:text-gray-400">
                     <Play className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <p>Click "Send Request" to test your JSON-RPC call</p>
                   </div>
                 )}
+
+                {isLoading && (
+                  <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    <Loader2 className="w-6 h-6 mx-auto mb-3 animate-spin" />
+                    <p>Waiting for response…</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <History className="h-5 w-5" />
+                    Recent requests
+                  </h3>
+                </div>
+                {recentRuns.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Your last 25 requests will appear here.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {recentRuns.map((run, index) => (
+                      <li
+                        key={`${run.timestamp}-${index}`}
+                        className="rounded-lg border border-border bg-gray-50/80 p-3 text-sm dark:bg-gray-900/40"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`font-medium ${run.ok ? "text-emerald-600 dark:text-emerald-300" : "text-red-600 dark:text-red-300"}`}>
+                            {run.ok ? "OK" : "Error"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(run.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                        </div>
+                        <div className="mt-1 font-mono text-xs text-gray-700 dark:text-gray-300 break-all" title={run.endpointUrl}>
+                          {run.endpointUrl}
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground">{run.method}</div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

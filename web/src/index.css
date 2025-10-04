@@ -214,6 +214,12 @@ body {
 
   .container { max-width: var(--container-max); margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
 
+  .bg-background { @apply bg-white dark:bg-gray-950; }
+  .text-foreground { @apply text-gray-900 dark:text-gray-100; }
+  .text-muted-foreground { @apply text-gray-600 dark:text-gray-400; }
+  .border-border { @apply border-gray-200 dark:border-gray-800; }
+  .bg-card { @apply bg-white dark:bg-gray-950; }
+
   /* Responsive grids */
   .grid-base { @apply grid gap-4; }
   .grid-sm-2 { @apply grid-base; grid-template-columns: 1fr; }

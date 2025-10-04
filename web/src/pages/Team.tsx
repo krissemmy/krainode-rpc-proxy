@@ -1,83 +1,77 @@
+import { Link } from "react-router-dom";
+import { Mail } from "lucide-react";
+import { TeamCard } from "@/components/TeamCard";
+import { teamMembers } from "@/data/team";
+import { Container, Section } from "@/components/layout";
+
+const advisors: typeof teamMembers = [];
+
 export default function Team() {
   return (
-    <div className="container" style={{ padding: "32px 0" }}>
-      {/* Top header */}
-      <div className="card" style={{ padding: 20, marginBottom: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <img src="/images/logo_icon.svg" alt="KraiNode" style={{ height: 32, opacity: 0.9 }} />
-          <h1 style={{ margin: 0 }}>About KraiNode</h1>
-        </div>
-        <p style={{ marginTop: 8 }}>
-          KraiNode is a developer-first JSON-RPC proxy and playground. It standardizes calls across public
-          nodes, forwards server-side with strict timeouts and retries, and gives teams real-time visibility
-          into error rates and latency—without exposing upstream URLs.
-        </p>
-      </div>
-
-      {/* Middle: two cards side-by-side on desktop */}
-      <div className="grid grid-sm-2" style={{ marginBottom: 16 }}>
-        <section className="card" style={{ padding: 20 }}>
-          <h2 style={{ marginTop: 0 }}>Roadmap (post-MVP)</h2>
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
-            <li>Advanced dashboard with analytics</li>
-            <li>Load balancing across multiple upstream nodes</li>
-            <li>Caching layer for frequently requested data</li>
-            <li>API key management</li>
-            <li>AI chatbot integration for non-devs to analyze blockchain data</li>
-            <li>More EVM chains and Non-EVM chains support</li>
-          </ul>
-        </section>
-
-        <section className="card" style={{ padding: 20 }}>
-          <h2 style={{ marginTop: 0 }}>Custom nodes for teams</h2>
-          <p style={{ marginBottom: 12 }}>
-            Need a dedicated, high-throughput node with guaranteed quotas? We provision custom endpoints
-            and higher rate limits.
-          </p>
-          <a className="btn" href="mailto:contact@krissemmy.com">Contact: contact@krissemmy.com</a>
-        </section>
-      </div>
-
-      {/* Sponsor card (full width) */}
-      {/* <section className="card" style={{ padding: 20, marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Support KraiNode</h2>
-        <p style={{ margin: "8px 0 12px" }}>
-          If KraiNode helps ur DX, u can sponsor to keep the lights on 🙏
-        </p>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <iframe
-            src="https://github.com/sponsors/krissemmy/card"
-            title="Sponsor krissemmy"
-            height="225"
-            width="100%"
-            loading="lazy"
-            style={{ border: 0, maxWidth: 600 }}
-          />
-        </div>
-      </section> */}
-
-      {/* Founder card (full width) */}
-      <section className="card" style={{ padding: 20 }}>
-        <h2 className="mb-2" style={{ marginTop: 0 }}>Founder</h2>
-        <div className="founder-grid">
-          <div>
-            <p>
-              <strong>Emmanuel Christopher</strong> is a DevOps &amp; Blockchain Data Engineer who has operated
-              high-availability node infrastructure and indexing systems across multiple chains, 
-              built observability
-              stacks (Grafana, Loki, Prometheus), and tuned Cloud latency and cost for production DeFi workloads.
+    <div className="bg-background text-foreground">
+      <Section>
+        <Container className="space-y-16">
+          <header className="mx-auto max-w-3xl space-y-6 text-center">
+            <div className="inline-flex items-center gap-3 rounded-full border border-border bg-gray-100 px-4 py-2 text-sm font-medium text-muted-foreground dark:bg-gray-900/70">
+              <img src="/images/logo_icon.svg" alt="KraiNode" className="h-6 w-auto" />
+              <span>Who's behind KraiNode</span>
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Built by developers, for developers</h1>
+            <p className="text-base text-muted-foreground sm:text-lg">
+              KraiNode started as a simple playground for testing blockchain RPCs and is now growing into an open tool for Web3 onboarding.
             </p>
-            <p className="italic mt-2">
-              He created KraiNode to make JSON-RPC predictable and easy to debug — a clean proxy with a playground that mirrors production.
-            </p>
-          </div>
-          <div className="founder-links">
-            <a className="btn" href="https://github.com/krissemmy" target="_blank" rel="noreferrer">GitHub</a>
-            <a className="btn-secondary" href="https://linkedin.com/in/emmanuel-christopher" target="_blank" rel="noreferrer">LinkedIn</a>
-            <a className="btn-secondary" href="mailto:contact@krissemmy.com">Email</a>
-          </div>
-        </div>
-      </section>
+            <a
+              href="mailto:contact@krissemmy.com"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 text-sm font-semibold text-white shadow transition hover:bg-primary-500 sm:text-base"
+            >
+              <Mail className="h-5 w-5" />
+              contact@krissemmy.com
+            </a>
+          </header>
+
+          <section>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold sm:text-3xl">Founder</h2>
+                <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+                  Grounded in running production RPC, data indexing, and observability stacks.
+                </p>
+              </div>
+              <Link
+                to="/playground"
+                className="inline-flex items-center text-sm font-semibold text-primary-600 transition hover:text-primary-500 sm:text-base"
+              >
+                Explore the playground
+              </Link>
+            </div>
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {teamMembers.map((member) => (
+                <TeamCard key={member.name} member={member} />
+              ))}
+            </div>
+          </section>
+
+          {/* <section className="space-y-6">
+            <div className="flex flex-col gap-2 text-center">
+              <h2 className="text-2xl font-semibold sm:text-3xl">Advisors &amp; contributors</h2>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                We collaborate with operators and protocol teams as the platform expands.
+              </p>
+            </div>
+            {advisors.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-gray-50/60 px-6 py-16 text-center text-sm text-muted-foreground dark:bg-gray-900/60">
+                Looking to help scale KraiNode? Reach out and let&apos;s collaborate.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {advisors.map((member) => (
+                  <TeamCard key={member.name} member={member} />
+                ))}
+              </div>
+            )}
+          </section> */}
+        </Container>
+      </Section>
     </div>
   );
 }

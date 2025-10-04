@@ -1,0 +1,369 @@
+{
+  "chains": [
+    {
+      "name": "ethereum",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://ethereum-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://ethereum-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "holesky",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://ethereum-holesky-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "hoodi",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://ethereum-hoodi-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "base",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://base-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://base-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "celo",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://celo-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "tatum",
+              "url": "https://celo-sepolia.gateway.tatum.io"
+            }
+          ],
+          "defaultProvider": "tatum"
+        },
+        {
+          "name": "alfajores",
+          "providers": [
+            {
+              "name": "celocommunity",
+              "url": "https://alfajores-rpc.celo-community.org"
+            }
+          ],
+          "defaultProvider": "celocommunity"
+        }
+      ]
+    },
+    {
+      "name": "avail",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://avail-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "testnet-turing",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://avail-turing-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "blast",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://blast-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "blastapi",
+              "url": "https://blastl2-sepolia.public.blastapi.io"
+            }
+          ],
+          "defaultProvider": "blastapi"
+        }
+      ]
+    },
+    {
+      "name": "mantle",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://mantle-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "mantlepublic",
+              "url": "https://rpc.sepolia.mantle.xyz/m"
+            }
+          ],
+          "defaultProvider": "mantlepublic"
+        }
+      ]
+    },
+    {
+      "name": "linea",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://linea-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://linea-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "sei-evm",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://sei-evm-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "testnet",
+          "providers": [
+            {
+              "name": "seichain",
+              "url": "https://unichain-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "seichain"
+        }
+      ]
+    },
+    {
+      "name": "scroll",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://scroll-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://scroll-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "arbitrum",
+      "networks": [
+        {
+          "name": "one",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://arbitrum-one-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "nova",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://arbitrum-nova-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://arbitrum-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "avalanche-c-chain",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://avalanche-c-chain-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "fuji",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://avalanche-fuji-c-chain-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "gnosis",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://gnosis-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "chiado",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://gnosis-chiado-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "unichain",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://unichain-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://unichain-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    }
+  ]
+}

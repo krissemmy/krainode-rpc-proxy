@@ -1,62 +1,17 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+  app:
+    image: node:20-alpine
+    working_dir: /app/web
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 8000"
+    environment:
+      - NODE_ENV=development
     expose:
       - "8000"
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      - SERVICE_NAME=krainode
-      - LOG_LEVEL=INFO
-      - ALLOWED_ORIGINS=["*"]
-      - RATE_LIMIT_RPS=5
-      - REQUEST_TIMEOUT_SECONDS=20
     volumes:
-      - ./logs:/app/logs
-      - ./backend/chains.yaml:/app/chains.yaml:ro
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
-    restart: unless-stopped
-    depends_on:
-      - api
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources
-    restart: unless-stopped
-    depends_on:
-      - prometheus
-
+      - ./web:/app/web
+      - ./chains.yaml:/app/chains.yaml:ro
+      - node_modules:/app/web/node_modules
 volumes:
-  prometheus_data:
-  grafana_data:
+  node_modules:

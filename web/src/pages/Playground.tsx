@@ -431,6 +431,15 @@ export function Playground() {
               Run JSON-RPC calls directly from your browser. Pick a chain, choose a provider, or paste any HTTP/HTTPS endpoint.
             </p>
           </div>
+          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-800 flex items-start gap-2">
+            <svg className="w-5 h-5 mt-0.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2a3 3 0 016 0v2H7V6z" clip-rule="evenodd" />
+            </svg>
+            <p>
+              <strong>No backend storage:</strong> Headers and API keys stay in your browser only. 
+              KraiNode never saves or logs your requests.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="space-y-6">

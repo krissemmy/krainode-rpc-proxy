@@ -1,224 +1,226 @@
 # KraiNode RPC Proxy
 
-**Production-ready JSON-RPC proxy with rate limiting, monitoring, and secure forwarding.**
+# KraiNode - JSON-RPC Playground
 
-KraiNode RPC Proxy is a complete solution that provides secure, rate-limited access to blockchain RPC endpoints. It includes a FastAPI backend with comprehensive monitoring, a React frontend with an interactive playground, and Docker-based deployment with Prometheus and Grafana monitoring.
+A Postman style JSON-RPC playground for testing blockchain RPC endpoints. No backend required - all requests are made directly from your browser to the RPC providers.
 
 👉 Live Playground: [https://krainode.krissemmy.com/playground](https://krainode.krissemmy.com/playground)
 
----
+## Features
 
-## ✨ Features
+- **Multi-chain support** - Test endpoints across 13+ blockchain networks
+- **Provider selection** - Choose from curated public providers or use your own custom URLs
+- **HTTP/HTTPS support** - Works with both local development nodes and production endpoints
+- **Live endpoint testing** - Probe endpoints before making requests to check connectivity
+- **Request/Response viewer** - JSON editor with syntax highlighting and formatted responses
+- **Local persistence** - Your selections and recent requests are saved locally
+- **Zero infrastructure** - Pure client-side application, deploy anywhere
 
-### Backend (FastAPI)
-- 🛡️ **Server-side Proxy**: Keep upstream URLs private, expose only your KraiNode endpoints
-- ⚡ **Rate Limiting**: Per-IP per-chain rate limiting with configurable limits
-- 📊 **Metrics & Monitoring**: Prometheus metrics and structured JSON logging
-- 🔧 **Easy Configuration**: Environment-based configuration for chains and limits
-- 📈 **Production Ready**: Health checks, structured logging, and monitoring
-- 🛡️ **Security Headers**: Comprehensive security headers via Caddy reverse proxy
-- 📏 **Request Size Limits**: Protection against large request attacks
+## Quick Start
 
-### Frontend (React + TypeScript)
-- 🎮 **Interactive Playground**: Test JSON-RPC methods with a user-friendly interface
-- 🔗 **Chain Selection**: Dynamically load available chains from backend
-- 📝 **JSON Editor**: Syntax highlighting and validation for requests
-- 🎯 **Method Presets**: Quick access to common Ethereum RPC methods
-- 📱 **Responsive Design**: Mobile-friendly interface
-- 🌙 **Theme Support**: Light/dark mode toggle
+### Local Development
 
-### Infrastructure
-- 🐳 **Docker Ready**: Complete stack with docker-compose
-- 📊 **Monitoring Stack**: Prometheus + Grafana for metrics visualization
-- 🔒 **HTTPS Support**: Automatic SSL certificates via Caddy
-- 🚀 **Production Ready**: Health checks, proper logging, and error handling
+```bash
+# Clone and navigate to the project
+git clone <repository-url>
+cd krainode-rpc-proxy
 
-## 🚀 Quick Start
+# Install dependencies and start dev server
+cd web
+npm install
+npm run dev
 
-### Prerequisites
-- Docker & Docker Compose
+# Open http://localhost:8000
+```
 
-### Development Setup
+### Docker Development
 
-1. **Clone and Start development servers**:
+```bash
+# Start development environment
+make docker-dev
+
+# Visit http://localhost:8000
+# Stop when done
+make docker-dev-down
+```
+
+## Deployment
+
+### Production with Docker
+
+```bash
+# Copy environment file
+cp env.example .env
+
+# Edit .env with your domain and email
+# EMAIL=your-email@example.com
+# APP_HOST=your-domain.com
+
+# Start production stack
+make docker-up
+
+# View logs
+make docker-logs
+```
+
+### Static Hosting (Vercel, Netlify, etc.)
+
+The app is a static React application that can be deployed to any static hosting service:
+
+```bash
+# Build the application
+cd web
+npm install
+npm run build
+
+# Deploy the 'dist' folder to your hosting service
+```
+
+**Vercel deployment:**
+1. Connect your GitHub repository to Vercel
+2. Set build command: `cd web && npm install && npm run build`
+3. Set output directory: `web/dist`
+4. Deploy
+
+**Netlify deployment:**
+1. Connect your GitHub repository to Netlify
+2. Set build command: `cd web && npm install && npm run build`
+3. Set publish directory: `web/dist`
+4. Deploy
+
+### Custom Domain with Caddy
+
+For production deployments with custom domains and automatic HTTPS:
+
+1. Set up your domain DNS to point to your server
+2. Configure environment variables:
    ```bash
-   git clone https://github.com/krissemmy/krainode-rpc-proxy.git
-   cd krainode-rpc-proxy
-   make dev
+   EMAIL=your-email@example.com
+   APP_HOST=your-domain.com
    ```
+3. Run `make docker-up`
+
+Caddy will automatically obtain SSL certificates and handle HTTPS redirects.
+
+## Configuration
+
+### Adding New Chains/Providers
+
+Edit `chains.yaml` to add new blockchain networks or RPC providers:
+
+```yaml
+chains:
+  - name: "Ethereum"
+    networks:
+      - name: "Mainnet"
+        providers:
+          - name: "noderpc"
+            url: "https://api.noderpc.xyz/rpc-mainnet/public"
+          - name: "publicnode"
+            url: "https://ethereum-rpc.publicnode.com"
+```
+
+After editing, restart the dev server or rebuild to regenerate the chains configuration.
+
+### Environment Variables
+
+Create a `.env` file with:
+
+```bash
+# Required for Caddy TLS certificates
+EMAIL=your-email@example.com
+
+# Your domain name (for production)
+APP_HOST=your-domain.com
+```
+
+## Development
+
+### Project Structure
+
+```
+krainode-mvp/
+├── web/                    # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/         # Main application pages
+│   │   └── lib/           # Utility functions
+│   ├── scripts/           # Build scripts
+│   └── public/            # Static assets
+├── chains.yaml            # Chain/network/provider configuration
+├── Dockerfile             # Production Docker image
+├── docker-compose.yml     # Production stack
+├── docker-compose-dev.yml # Development stack
+├── Caddyfile             # Reverse proxy configuration
+└── Makefile              # Development commands
+```
 
 ### Available Commands
 
 ```bash
-make help          # Show all available commands
-make dev           # Start all service using the docker-compose-dev.yml file
-make test         # Run test
-make docker-down   # Stop Docker Compose
-make clean         # Clean build artifacts. if running locally without docker
-make status        # Check service status
+# Development
+make dev              # Start Vite dev server
+make build            # Build production bundle
+make clean            # Clean build artifacts
+
+# Docker
+make docker-dev       # Start development with Docker
+make docker-up        # Start production stack
+make docker-down      # Stop production stack
+make docker-logs      # View container logs
 ```
 
-### For production environment. Using Docker Compose (Recommended)
+### Adding New Features
 
-1. **Clone and setup**:
-   ```bash
-   git clone https://github.com/krissemmy/krainode-rpc-proxy.git
-   cd krainode-rpc-proxy
-   cp env.example .env
-   ```
+1. **New RPC methods**: Add to `MethodSelect` component
+2. **New chains**: Update `chains.yaml` and restart dev server
+3. **UI components**: Add to `web/src/components/`
+4. **Styling**: Uses Tailwind CSS, edit component classes
 
-2. **Configure your ssl domain** (edit `.env`):
-   ```bash
-   # Set your domain for SSL certificates
-   EMAIL=your-email@example.com
-   API_HOST=your-domain.com
-   
-   # Generate a secure Grafana password
-   GRAFANA_ADMIN_PASSWORD=your_secure_password_here
-   ```
+## Troubleshooting
 
-3. **Start the complete stack**:
-   ```bash
-   docker compose up --build
-   ```
+### CORS Issues
 
-4. **Access the services**:
-   - **Web UI**: http://localhost:8000 (or https://your-domain.com)
-   - **Playground**: http://localhost:8000/playground
-   - **API Docs**: http://localhost:8000/docs
-   - **Health Check**: http://localhost:8000/healthz
-   - **Metrics**: http://localhost:8000/metrics
-   - **Prometheus**: http://localhost:9090
-   - **Grafana**: http://localhost:3000 (admin/password from GRAFANA_ADMIN_PASSWORD)
+Some RPC providers block browser requests due to CORS policies. The playground will show:
+- **OK** - Request successful
+- **Blocked (CORS/Network)** - CORS or network issue
+- **Timeout** - No response within 30 seconds (RPC requests) or 4 seconds (probe requests)
 
-## 📋 API Usage
+**Solutions:**
+- Try a different provider
+- Use a CORS proxy for development
+- Deploy your own RPC endpoint with proper CORS headers
 
-### Using the Web Playground (Recommended)
-
-1. Open http://localhost:8000/playground
-2. Select a chain from the dropdown
-3. Choose a method or enter a custom one
-4. Fill in parameters and click "Send Request"
-5. View the response with syntax highlighting
-
-### Using cURL
-
-#### Basic JSON-RPC Request
-```bash
-curl -X POST http://localhost:8000/api/rpc/ethereum-mainnet/json \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "eth_blockNumber",
-    "params": []
-  }'
-```
-
-#### Ping a Chain
-```bash
-curl http://localhost:8000/api/rpc/ethereum-mainnet/ping
-```
-
-#### Get Available Chains
-```bash
-curl http://localhost:8000/api/chains
-```
-
-#### Get API Information
-```bash
-curl http://localhost:8000/
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVICE_NAME` | `krainode` | Service name for logging |
-| `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `ALLOWED_ORIGINS` | `["https://localhost:8000"]` | CORS allowed origins (security: not wildcard by default) |
-| `RATE_LIMIT_RPS` | `5` | Rate limit (requests per second per IP per chain) |
-| `CHAINS_JSON` | See env.example | Chain configuration (JSON string) |
-| `REQUEST_TIMEOUT_SECONDS` | `20` | Upstream request timeout |
-| `EMAIL` | `YOUR_EMAIL` | Email for SSL certificate registration |
-| `API_HOST` | `YOUR_HOSTED_DOMAIN` | Domain for Caddy SSL certificates |
-| `GRAFANA_ADMIN_PASSWORD` | `your_secure_password_here` | Grafana admin password |
-
-### Adding New Chains
-
-Edit your `.env` file to add more chains:
+### Local Development Issues
 
 ```bash
-CHAINS_JSON={"ethereum-mainnet":"https://ethereum-rpc.publicnode.com","polygon-mainnet":"https://polygon-rpc.publicnode.com","arbitrum1":"https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY"}
+# Clear node_modules and reinstall
+cd web
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear browser cache and localStorage
+# Open dev tools > Application > Storage > Clear storage
 ```
 
-Restart the service and the new chains will be available immediately in both the API and the web playground.
+### Docker Issues
 
-## 🏗️ Architecture
+```bash
+# Rebuild containers
+make docker-down
+make docker-up
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web Browser   │───▶│   Caddy         │───▶│   FastAPI       │
-│   (React App)   │    │   (HTTPS/SSL)   │    │   (Backend)     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │                        │
-                              ▼                        ▼
-                       ┌─────────────────┐    ┌─────────────────┐
-                       │   Monitoring    │    │  Upstream RPC   │
-                       │ (Prometheus +   │    │   (Private)     │
-                       │   Grafana)      │    │                 │
-                       └─────────────────┘    └─────────────────┘
+# Check logs
+make docker-logs
 ```
 
-### Components
+## Contributing
 
-- **React Frontend**: Interactive playground and web interface
-- **Caddy**: Reverse proxy with automatic HTTPS and security headers
-- **FastAPI Backend**: Handles RPC proxying, rate limiting, and metrics
-- **Prometheus**: Metrics collection and storage
-- **Grafana**: Metrics visualization and dashboards
-
-## 📊 API Endpoints
-
-### Web Interface
-- `GET /` - Home page with feature overview
-- `GET /playground` - Interactive JSON-RPC testing interface
-- `GET /team` - Team information page
-
-### RPC Proxy
-- `POST /api/rpc/{chain}/json` - Proxy JSON-RPC requests
-- `GET /api/rpc/{chain}/ping` - Ping chain with eth_blockNumber
-
-### Management
-- `GET /api/chains` - List available chains
-- `GET /healthz` - Health check
-- `GET /metrics` - Prometheus metrics
-- `GET /docs` - Interactive API documentation
-
-## 📈 Metrics
-
-KraiNode exposes Prometheus metrics at `/metrics`:
-
-- `krainode_requests_total{chain,method,status_code}` - Request counter
-- `krainode_request_duration_ms{chain,method}` - Request duration histogram
-- `krainode_errors_total{chain,method,error_type}` - Error counter
-- `krainode_rate_limit_hits_total{chain,client_ip}` - Rate limit hits
-
-## ⚡ Rate Limiting
-
-Rate limiting is applied per IP address per chain:
-
-- **Default**: 5 requests per second per IP per chain
-- **Configurable**: Via `RATE_LIMIT_RPS` environment variable
-- **Response**: HTTP 429 with `Retry-After` header when exceeded
-- **Headers**: Include comprehensive rate limit information:
-  - `X-RateLimit-Limit`: Rate limit per second
-  - `X-RateLimit-Remaining`: Remaining requests in current window
-  - `X-RateLimit-Reset`: Time when limit resets
-- **Security**: Prevents abuse while allowing legitimate usage
-
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test locally with `make dev`
+5. Submit a pull request
 
 ## 🌐 Supported Chains
 
@@ -238,18 +240,14 @@ Currently configured in `backend/chains.yml` with PublicNode endpoints:
 - **Gnosis Mainnet** (`gnosis`)
 - **Unichain Mainnet** (`unichain`)
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
 ## 🆘 Support
 
 - GitHub Issues: [Report bugs and request features](https://github.com/krissemmy/krainode-rpc-proxy/issues)
 - Documentation: [Full API documentation](http://localhost:8000/docs)
+
+## License
+
+MIT License - see LICENSE file for details.
 
 ---
 

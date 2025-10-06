@@ -1,80 +1,27 @@
-.PHONY: help build dev test clean docker-build docker-up docker-down
+.PHONY: help dev build clean docker-dev docker-up docker-down docker-logs
 
-help: ## Show this help message
-	@echo "KraiNode - JSON-RPC Proxy"
+help: ## Show available commands
+	@echo "KraiNode - JSON-RPC Playground"
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-build: ## Build the frontend # Local build only
+dev: ## Start the Vite development server
+	cd web && npm install && npm run dev
+
+build: ## Build the production bundle
 	cd web && npm install && npm run build
 
-dev: ## Start development servers
-	@echo "Starting development servers..."
-	@echo "KraiNode: http://localhost:8000"
-	@echo "Press Ctrl+C to stop"
-	@trap 'kill %1 %2' INT; \
-	cp env.dev.example .env && \
-	docker compose -f docker-compose-dev.yml up --build -d
-	wait
+clean: ## Remove build artifacts and dependencies
+	rm -rf web/dist web/node_modules
 
-test: ## Run tests
-	cd backend && pytest tests/ -v
+docker-dev: ## Start development environment with Docker
+	docker compose -f docker-compose-dev.yml up --build
 
-test-coverage: ## Run tests with coverage
-	cd backend && pytest tests/ --cov=app --cov-report=html
+docker-up: ## Start production stack (Caddy + app)
+	docker compose up -d --build
 
-lint: ## Run linting
-	cd backend && black app/ tests/ && isort app/ tests/ && flake8 app/ tests/
-	cd web && npm run lint
-
-docker-build: ## Build Docker image
-	docker build -f backend/Dockerfile -t krainode:latest .
-
-docker-up: ## Start services with Docker Compose
-	docker compose -f docker-compose.yml up --build -d
-
-docker-down: ## Stop Docker Compose services
+docker-down: ## Stop production stack
 	docker compose down
 
-docker-logs: ## View Docker Compose logs
+docker-logs: ## Follow logs from running containers
 	docker compose logs -f
-
-clean: ## Clean build artifacts
-	rm -rf web/dist
-	rm -rf web/node_modules
-	rm -rf backend/__pycache__
-	rm -rf backend/.pytest_cache
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-
-install: ## Install dependencies
-	cd backend && pip install -e .
-	cd web && npm install
-
-setup: ## Initial setup
-	cp env.example .env
-	@echo "Edit .env file with your configuration"
-	@echo "Then run 'make install' to install dependencies"
-
-prod-build: ## Build for production
-	docker build -f backend/Dockerfile -t krainode:latest .
-
-prod-run: ## Run production container
-	docker run -p 8000:8000 \
-		-e CHAINS_JSON='{"ethereum":"https://ethereum-rpc.publicnode.com"}' \
-		-e RATE_LIMIT_RPS=10 \
-		krainode:latest
-
-check: ## Check system requirements
-	@echo "Checking system requirements..."
-	@command -v python3 >/dev/null 2>&1 || { echo "Python 3 is required but not installed."; exit 1; }
-	@command -v node >/dev/null 2>&1 || { echo "Node.js is required but not installed."; exit 1; }
-	@command -v docker >/dev/null 2>&1 || { echo "Docker is required but not installed."; exit 1; }
-	@echo "All requirements satisfied!"
-
-status: ## Show service status
-	@echo "Checking service status..."
-	@curl -s http://localhost:8000/healthz >/dev/null && echo "✅ Backend is running" || echo "❌ Backend is not running"
-	@curl -s http://localhost:3000 >/dev/null && echo "✅ Frontend is running" || echo "❌ Frontend is not running"
-	@curl -s http://localhost:9090 >/dev/null && echo "✅ Prometheus is running" || echo "❌ Prometheus is not running"
-	@curl -s http://localhost:3000 >/dev/null && echo "✅ Grafana is running" || echo "❌ Grafana is not running"

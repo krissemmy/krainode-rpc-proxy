@@ -2,7 +2,8 @@ import { ChevronDown } from 'lucide-react'
 
 interface Network {
   name: string
-  apiUrl: string
+  providers: Array<{ name: string; url: string }>
+  defaultProvider: string
 }
 
 interface NetworkSelectProps {

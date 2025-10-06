@@ -5,8 +5,6 @@ ethereum:
     noderpc: "https://api.noderpc.xyz/rpc-mainnet/public"
   sepolia:
     publicnode: "https://ethereum-sepolia-rpc.publicnode.com"
-  holesky:
-    publicnode: "https://ethereum-holesky-rpc.publicnode.com"
   hoodi:
     publicnode: "https://ethereum-hoodi-rpc.publicnode.com"
 base:

@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=production
     expose:
-      - "3000"
+      - "8000"
     restart: unless-stopped
 
   caddy:

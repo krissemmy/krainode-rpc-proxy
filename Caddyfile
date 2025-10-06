@@ -13,7 +13,7 @@
 }
 
 # HTTPS for API
-{$API_HOST} {
+{$APP_HOST} {
   encode zstd gzip
 
   # (Optional) add CORS headers *here* if you want proxy-level CORS
@@ -36,7 +36,7 @@
   respond @live  200
 
   # Proxy to your container network service
-  reverse_proxy api:8000 {
+  reverse_proxy app:8000 {
     header_up X-Real-IP {remote_host}
   }
 

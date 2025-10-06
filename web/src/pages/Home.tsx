@@ -131,7 +131,7 @@ export function Home() {
               Test JSON-RPC endpoints without leaving the browser
             </h1>
             <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
-              Choose from curated public providers or bring your own endpoint. The playground talks to your nodes directly—no proxy, no API keys.
+              Choose from curated public providers or bring your own endpoint. The playground talks to your nodes directly........no proxy, no API keys.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link

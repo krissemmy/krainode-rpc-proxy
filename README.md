@@ -109,15 +109,10 @@ Caddy will automatically obtain SSL certificates and handle HTTPS redirects.
 Edit `chains.yaml` to add new blockchain networks or RPC providers:
 
 ```yaml
-chains:
-  - name: "Ethereum"
-    networks:
-      - name: "Mainnet"
-        providers:
-          - name: "noderpc"
-            url: "https://api.noderpc.xyz/rpc-mainnet/public"
-          - name: "publicnode"
-            url: "https://ethereum-rpc.publicnode.com"
+ethereum
+  mainnet:
+    noderpc: "https://api.noderpc.xyz/rpc-mainnet/public"
+    publicnode: "https://ethereum-rpc.publicnode.com"
 ```
 
 After editing, restart the dev server or rebuild to regenerate the chains configuration.

@@ -1,6 +1,8 @@
 ethereum:
   mainnet:
     publicnode: "https://ethereum-rpc.publicnode.com"
+    nownodes: "https://public-eth.nownodes.io/"
+    noderpc: "https://api.noderpc.xyz/rpc-mainnet/public"
   sepolia:
     publicnode: "https://ethereum-sepolia-rpc.publicnode.com"
   holesky:
@@ -17,8 +19,6 @@ celo:
     publicnode: "https://celo-rpc.publicnode.com"
   sepolia:
     tatum: "https://celo-sepolia.gateway.tatum.io"
-  alfajores:
-    celocommunity: "https://alfajores-rpc.celo-community.org"
 avail:
   mainnet:
     publicnode: "https://avail-rpc.publicnode.com"

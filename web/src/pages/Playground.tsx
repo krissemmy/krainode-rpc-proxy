@@ -35,6 +35,7 @@ interface RecentRun {
   method: string;
   timestamp: number;
   ok: boolean;
+  latency: number;
 }
 
 const STORAGE_KEYS = {
@@ -301,10 +302,10 @@ export function Playground() {
     }
   };
 
-  const recordRecent = (ok: boolean, method: string, endpointUrl: string) => {
+  const recordRecent = (ok: boolean, method: string, endpointUrl: string, latency: number) => {
     if (!endpointUrl) return;
     setRecentRuns((prev) => {
-      const entry: RecentRun = { endpointUrl, method, ok, timestamp: Date.now() };
+      const entry: RecentRun = { endpointUrl, method, ok, timestamp: Date.now(), latency };
       return [entry, ...prev].slice(0, MAX_RECENT);
     });
   };
@@ -317,6 +318,7 @@ export function Playground() {
     setIsLoading(true);
     setError(null);
     setResponseData(null);
+    const startTime = Date.now();
     try {
       const parsed = JSON.parse(requestJson) as RpcBody | RpcBody[];
       if ((typeof parsed !== "object" || parsed === null) && !Array.isArray(parsed)) {
@@ -324,12 +326,13 @@ export function Playground() {
       }
       const headers = customUrl && customHeaders ? parseHeaders(customHeaders) : undefined;
       const rpcResult = await rpcFetch(effectiveUrl, parsed, 40000, headers);
+      const latency = Date.now() - startTime;
       const methodName = Array.isArray(parsed)
         ? (parsed[0]?.method as string | undefined) ?? selectedMethod
         : ((parsed as RpcBody).method ?? selectedMethod);
       if (rpcResult.ok) {
         setResponseData(rpcResult.data);
-        recordRecent(true, methodName, effectiveUrl);
+        recordRecent(true, methodName, effectiveUrl, latency);
       } else {
         const friendly =
           rpcResult.error.kind === "network_or_cors"
@@ -338,11 +341,16 @@ export function Playground() {
               ? "Request timed out."
               : rpcResult.error.message;
         setError(friendly);
-        recordRecent(false, methodName, effectiveUrl);
+        recordRecent(false, methodName, effectiveUrl, latency);
       }
     } catch (err) {
+      const latency = Date.now() - startTime;
       const message = err instanceof Error ? err.message : "Invalid JSON request.";
       setError(message === "Unexpected end of JSON input" ? "Invalid JSON in request body." : message);
+      const methodName = Array.isArray(JSON.parse(requestJson))
+        ? (JSON.parse(requestJson)[0]?.method as string | undefined) ?? selectedMethod
+        : ((JSON.parse(requestJson) as RpcBody).method ?? selectedMethod);
+      recordRecent(false, methodName, effectiveUrl, latency);
     } finally {
       setIsLoading(false);
     }
@@ -712,8 +720,9 @@ export function Playground() {
                 {recentRuns.length === 0 ? (
                   <p className="text-sm text-muted-foreground">Your last 25 requests will appear here.</p>
                 ) : (
-                  <ul className="space-y-2">
-                    {recentRuns.map((run, index) => (
+                  <div className="max-h-96 overflow-y-auto">
+                    <ul className="space-y-2">
+                      {recentRuns.map((run, index) => (
                       <li
                         key={`${run.timestamp}-${index}`}
                         className="rounded-lg border border-border bg-gray-50/80 p-3 text-sm dark:bg-gray-900/40"
@@ -722,17 +731,29 @@ export function Playground() {
                           <span className={`font-medium ${run.ok ? "text-emerald-600 dark:text-emerald-300" : "text-red-600 dark:text-red-300"}`}>
                             {run.ok ? "OK" : "Error"}
                           </span>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(run.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                          </span>
+                          <div className="text-right">
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(run.timestamp).toLocaleString([], { 
+                                month: "short", 
+                                day: "numeric", 
+                                hour: "2-digit", 
+                                minute: "2-digit",
+                                second: "2-digit"
+                              })}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {run.latency}ms
+                            </div>
+                          </div>
                         </div>
                         <div className="mt-1 font-mono text-xs text-gray-700 dark:text-gray-300 break-all" title={run.endpointUrl}>
                           {run.endpointUrl}
                         </div>
                         <div className="mt-1 text-xs text-muted-foreground">{run.method}</div>
                       </li>
-                    ))}
-                  </ul>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             </div>

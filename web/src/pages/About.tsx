@@ -6,7 +6,7 @@ import { Container, Section } from "@/components/layout";
 
 const advisors: typeof teamMembers = [];
 
-export default function Team() {
+export default function About() {
   return (
     <div className="bg-background text-foreground">
       <Section>
@@ -14,11 +14,14 @@ export default function Team() {
           <header className="mx-auto max-w-3xl space-y-6 text-center">
             <div className="inline-flex items-center gap-3 rounded-full border border-border bg-gray-100 px-4 py-2 text-sm font-medium text-muted-foreground dark:bg-gray-900/70">
               <img src="/images/logo_icon.svg" alt="KraiNode" className="h-6 w-auto" />
-              <span>Who's behind KraiNode</span>
+              <span>About KraiNode</span>
             </div>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Built by developers, for developers</h1>
             <p className="text-base text-muted-foreground sm:text-lg">
-              KraiNode started as a simple playground for testing blockchain RPCs and is now growing into an open tool for Web3 onboarding.
+              KraiNode is an open-source RPC playground for Web3 devs. Every developer building on blockchain has hit the same wall, broken endpoints, slow RPCs, or the never-ending copy-paste of curl commands just to test a simple call. Postman was great for APIs, but nothing ever fit cleanly for blockchain. So I built one that does.
+            </p>
+            <p className="text-base text-muted-foreground sm:text-lg">
+              KraiNode is like Postman for blockchain RPCs; built by someone who actually runs full nodes and understands the pain from both sides. You can ping any chain (Ethereum, Base, Arbitrum, etc.), inspect responses in real-time, add headers, tweak payloads, and test contract calls without worrying about breaking your backend. It's a clean, no-BS playground that lives right in your browser.
             </p>
             <a
               href="mailto:contact@krissemmy.com"

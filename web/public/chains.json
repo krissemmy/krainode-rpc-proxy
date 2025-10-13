@@ -7,11 +7,19 @@
           "name": "mainnet",
           "providers": [
             {
+              "name": "noderpc",
+              "url": "https://api.noderpc.xyz/rpc-mainnet/public"
+            },
+            {
+              "name": "nownodes",
+              "url": "https://public-eth.nownodes.io/"
+            },
+            {
               "name": "publicnode",
               "url": "https://ethereum-rpc.publicnode.com"
             }
           ],
-          "defaultProvider": "publicnode"
+          "defaultProvider": "noderpc"
         },
         {
           "name": "sepolia",
@@ -19,16 +27,6 @@
             {
               "name": "publicnode",
               "url": "https://ethereum-sepolia-rpc.publicnode.com"
-            }
-          ],
-          "defaultProvider": "publicnode"
-        },
-        {
-          "name": "holesky",
-          "providers": [
-            {
-              "name": "publicnode",
-              "url": "https://ethereum-holesky-rpc.publicnode.com"
             }
           ],
           "defaultProvider": "publicnode"
@@ -92,16 +90,6 @@
             }
           ],
           "defaultProvider": "tatum"
-        },
-        {
-          "name": "alfajores",
-          "providers": [
-            {
-              "name": "celocommunity",
-              "url": "https://alfajores-rpc.celo-community.org"
-            }
-          ],
-          "defaultProvider": "celocommunity"
         }
       ]
     },
@@ -359,6 +347,31 @@
             {
               "name": "publicnode",
               "url": "https://unichain-sepolia-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        }
+      ]
+    },
+    {
+      "name": "optimism",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://optimism-rpc.publicnode.com"
+            }
+          ],
+          "defaultProvider": "publicnode"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "publicnode",
+              "url": "https://optimism-sepolia-rpc.publicnode.com"
             }
           ],
           "defaultProvider": "publicnode"

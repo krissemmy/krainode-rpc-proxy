@@ -14,7 +14,7 @@ export default function NavBar() {
     () => [
       { to: "/", label: "Home" },
       { to: "/playground", label: "Playground" },
-      { to: "/team", label: "Team" }
+      { to: "/about", label: "About" }
     ],
     []
   );

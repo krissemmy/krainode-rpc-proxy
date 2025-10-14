@@ -7,6 +7,7 @@ import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelec
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
+import { TimeoutErrorCard } from "../components/TimeoutErrorCard";
 import { rpcFetch, type RpcBody } from "../lib/rpc";
 import { probeEndpoint } from "../lib/probe";
 
@@ -69,6 +70,9 @@ export function Playground() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [isTimeoutError, setIsTimeoutError] = useState(false);
+  const [hasRetriedTimeout, setHasRetriedTimeout] = useState(false);
+  const [isRetryingTimeout, setIsRetryingTimeout] = useState(false);
 
   const [probeResult, setProbeResult] = useState<{ ok: boolean; label: string } | null>(null);
   const [isProbing, setIsProbing] = useState(false);
@@ -310,6 +314,22 @@ export function Playground() {
     });
   };
 
+  const isTimeoutOrNetworkError = (error: string): boolean => {
+    const timeoutPatterns = [
+      'Request timed out',
+      'aborted',
+      'timeout',
+      'AbortError',
+      'Failed to fetch',
+      'Network blocked',
+      'CORS'
+    ];
+    return timeoutPatterns.some(pattern => 
+      error.toLowerCase().includes(pattern.toLowerCase())
+    );
+  };
+
+
   const handleSendRequest = async () => {
     if (!effectiveUrl) {
       setError("Select a chain, network, and provider or supply a custom URL.");
@@ -318,6 +338,8 @@ export function Playground() {
     setIsLoading(true);
     setError(null);
     setResponseData(null);
+    setIsTimeoutError(false);
+    setHasRetriedTimeout(false);
     const startTime = Date.now();
     try {
       const parsed = JSON.parse(requestJson) as RpcBody | RpcBody[];
@@ -340,13 +362,26 @@ export function Playground() {
             : rpcResult.error.kind === "timeout"
               ? "Request timed out."
               : rpcResult.error.message;
-        setError(friendly);
+        
+        // Check if this is a timeout/network error
+        if (isTimeoutOrNetworkError(friendly) || rpcResult.error.kind === "timeout" || rpcResult.error.kind === "network_or_cors") {
+          setIsTimeoutError(true);
+        } else {
+          setError(friendly);
+        }
         recordRecent(false, methodName, effectiveUrl, latency);
       }
     } catch (err) {
       const latency = Date.now() - startTime;
       const message = err instanceof Error ? err.message : "Invalid JSON request.";
-      setError(message === "Unexpected end of JSON input" ? "Invalid JSON in request body." : message);
+      
+      // Check if this is a timeout/network error
+      if (isTimeoutOrNetworkError(message)) {
+        setIsTimeoutError(true);
+      } else {
+        setError(message === "Unexpected end of JSON input" ? "Invalid JSON in request body." : message);
+      }
+      
       const methodName = Array.isArray(JSON.parse(requestJson))
         ? (JSON.parse(requestJson)[0]?.method as string | undefined) ?? selectedMethod
         : ((JSON.parse(requestJson) as RpcBody).method ?? selectedMethod);
@@ -402,6 +437,28 @@ export function Playground() {
     }
   };
 
+  const handleTimeoutRetry = async () => {
+    if (!effectiveUrl) return;
+    setIsRetryingTimeout(true);
+    setHasRetriedTimeout(true);
+    try {
+      const headers = customUrl && customHeaders ? parseHeaders(customHeaders) : undefined;
+      const result = await probeEndpoint(effectiveUrl, 10000, headers);
+      if (result.ok) {
+        // If probe succeeds, try the original request again
+        await handleSendRequest();
+      } else {
+        // If probe fails, keep the timeout error state but mark as unreachable
+        setIsTimeoutError(true);
+      }
+    } catch (err) {
+      // If probe throws an error, keep the timeout error state but mark as unreachable
+      setIsTimeoutError(true);
+    } finally {
+      setIsRetryingTimeout(false);
+    }
+  };
+
   const clearLocalData = () => {
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEYS.chain);
@@ -417,6 +474,10 @@ export function Playground() {
     setCustomHeaders("");
     setCustomHeadersInput("");
     setProbeResult(null);
+    setError(null);
+    setIsTimeoutError(false);
+    setHasRetriedTimeout(false);
+    setIsRetryingTimeout(false);
     initialProviderSyncRef.current = true;
     previousNetworkRef.current = null;
     if (chainDetails[0]) {
@@ -659,7 +720,15 @@ export function Playground() {
                   )}
                 </div>
 
-                {error && (
+                {isTimeoutError && (
+                  <TimeoutErrorCard 
+                    onRetry={handleTimeoutRetry}
+                    isRetrying={isRetryingTimeout}
+                    hasRetried={hasRetriedTimeout}
+                  />
+                )}
+
+                {error && !isTimeoutError && (
                   <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <div className="flex items-center">
                       <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />

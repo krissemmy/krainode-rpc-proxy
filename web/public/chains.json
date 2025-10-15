@@ -377,6 +377,31 @@
           "defaultProvider": "publicnode"
         }
       ]
+    },
+    {
+      "name": "jovay",
+      "networks": [
+        {
+          "name": "mainnet",
+          "providers": [
+            {
+              "name": "jovaypublic",
+              "url": "https://rpc.jovay.io"
+            }
+          ],
+          "defaultProvider": "jovaypublic"
+        },
+        {
+          "name": "sepolia",
+          "providers": [
+            {
+              "name": "jovaypublic",
+              "url": "https://api.zan.top/public/jovay-testnet"
+            }
+          ],
+          "defaultProvider": "jovaypublic"
+        }
+      ]
     }
   ]
 }

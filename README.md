@@ -219,21 +219,23 @@ make docker-logs
 
 ## 🌐 Supported Chains
 
-Currently configured in `backend/chains.yml` with PublicNode endpoints:
+Currently configured in `chains.yml` with PublicNode endpoints:
 
-- **Ethereum Mainnet** (`ethereum`)
-- **Base Mainnet** (`base`)
-- **Celo Mainnet** (`celo`)
-- **Avail Mainnet** (`avail`)
-- **Blast Mainnet** (`blast`)
-- **Mantle Mainnet** (`mantle`)
-- **Linea Mainnet** (`linea`)
-- **Sei EVM Mainnet** (`sei-evm`)
-- **Scroll Mainnet** (`scroll`)
+- **Ethereum** (`ethereum`)
+- **Base** (`base`)
+- **Celo** (`celo`)
+- **Avail** (`avail`)
+- **Blast** (`blast`)
+- **Mantle** (`mantle`)
+- **Linea** (`linea`)
+- **Sei EVM** (`sei-evm`)
+- **Scroll** (`scroll`)
 - **Arbitrum One** (`arbitrum`)
 - **Avalanche C-Chain** (`avalanche-c-chain`)
-- **Gnosis Mainnet** (`gnosis`)
-- **Unichain Mainnet** (`unichain`)
+- **Gnosis** (`gnosis`)
+- **Unichain** (`unichain`)
+- **Optimism** (`unichain`)
+- **Plasma** (`unichain`)
 
 ## 🆘 Support
 

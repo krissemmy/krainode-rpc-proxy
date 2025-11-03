@@ -74,3 +74,8 @@ optimism:
     publicnode: "https://optimism-rpc.publicnode.com"
   sepolia:
     publicnode: "https://optimism-sepolia-rpc.publicnode.com"
+plasma:
+  mainnet:
+    plasma-mainnet-beta: "https://rpc.plasma.to"
+  testnet:
+    plasma-testnet: "https://testnet-rpc.plasma.to"

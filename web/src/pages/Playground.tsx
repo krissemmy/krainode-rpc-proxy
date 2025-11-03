@@ -116,6 +116,34 @@ export function Playground() {
   }, []);
 
   useEffect(() => {
+    // Deep-link prefill: /playground?chain=&method=&body=&url=&headers=
+    try {
+      const qs = new URLSearchParams(window.location.search);
+      const dlChain = qs.get("chain");
+      const dlMethod = qs.get("method");
+      const dlBody = qs.get("body");
+      const dlUrl = qs.get("url");
+      const dlHeaders = qs.get("headers");
+
+      if (dlChain) setSelectedChain(dlChain);
+      if (dlUrl) {
+        setCustomUrl(dlUrl);
+        setCustomInput(dlUrl);
+      }
+      if (dlHeaders) {
+        setCustomHeaders(dlHeaders);
+        setCustomHeadersInput(dlHeaders);
+      }
+      if (dlMethod) setSelectedMethod(dlMethod);
+      if (dlBody) setRequestJson(dlBody);
+    } catch {
+      // ignore invalid querystrings
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const loadChains = async () => {
       setChainsLoading(true);

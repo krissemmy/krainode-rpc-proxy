@@ -134,7 +134,7 @@ APP_HOST=your-domain.com
 ### Project Structure
 
 ```
-krainode-mvp/
+krainode-rpc-proxy/
 ├── web/                    # React frontend
 │   ├── src/
 │   │   ├── components/     # Reusable UI components

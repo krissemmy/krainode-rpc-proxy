@@ -22,7 +22,7 @@ A Postman style JSON-RPC playground for testing blockchain RPC endpoints. No bac
 
 ```bash
 # Clone and navigate to the project
-git clone <repository-url>
+git clone https://github.com/krissemmy/krainode-rpc-proxy.git
 cd krainode-rpc-proxy
 
 # Install dependencies and start dev server

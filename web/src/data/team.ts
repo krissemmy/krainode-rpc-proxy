@@ -19,6 +19,7 @@ export const teamMembers: TeamMember[] = [
     socials: [
       { label: "GitHub", url: "https://github.com/krissemmy" },
       { label: "LinkedIn", url: "https://linkedin.com/in/emmanuel-christopher" },
+      { label: "X", url: "https://x.com/chris__emma" },
       { label: "Email", url: "mailto:contact@krissemmy.com" },
     ],
   },

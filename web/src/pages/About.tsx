@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { Mail, Twitter, Github } from "lucide-react";
 import { TeamCard } from "@/components/TeamCard";
 import { teamMembers } from "@/data/team";
 import { Container, Section } from "@/components/layout";
@@ -23,13 +23,31 @@ export default function About() {
             <p className="text-base text-muted-foreground sm:text-lg">
               KraiNode is like Postman for blockchain RPCs; built by someone who actually runs full nodes and understands the pain from both sides. You can ping any chain (Ethereum, Base, Arbitrum, etc.), inspect responses in real-time, add headers, tweak payloads, and test contract calls without worrying about breaking your backend. It's a clean, no-BS playground that lives right in your browser.
             </p>
-            <a
-              href="mailto:contact@krissemmy.com"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 text-sm font-semibold text-white shadow transition hover:bg-primary-500 sm:text-base"
-            >
-              <Mail className="h-5 w-5" />
-              contact@krissemmy.com
-            </a>
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href="https://x.com/krainode_web3"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary-600 bg-white px-6 text-sm font-semibold text-primary-700 shadow transition hover:border-primary-500 hover:text-primary-600 sm:text-base"
+              >
+                <Twitter className="h-5 w-5" />
+                X/Twitter
+              </a>
+              <a
+                href="mailto:contact@krissemmy.com"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 text-sm font-semibold text-white shadow transition hover:bg-primary-500 sm:text-base"
+              >
+                <Mail className="h-5 w-5" />
+                contact@krissemmy.com
+              </a>
+              <a
+                href="https://github.com/krissemmy/krainode-rpc-proxy"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary-600 bg-white px-6 text-sm font-semibold text-primary-700 shadow transition hover:border-primary-500 hover:text-primary-600 sm:text-base"
+              >
+                <Github className="h-5 w-5" />
+                GitHub Repo
+              </a>
+            </div>
           </header>
 
           <section>

@@ -74,7 +74,7 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
                     <span className="text-sm text-black">
                       <span className="font-semibold text-black">{meta.name}</span> is live for {`${chainId.charAt(0).toUpperCase() + chainId.slice(1)}`} {`${networkId.charAt(0).toUpperCase() + networkId.slice(1)}`}......low-latency, high-uptime RPCs built for production workloads.{" "}
                       </span>
-                    <span aria-hidden className="text-xl leading-none">🔥🔥</span>
+                    <span aria-hidden className="text-xl leading-none"></span>
                   </div>
                 ))}
               </div>

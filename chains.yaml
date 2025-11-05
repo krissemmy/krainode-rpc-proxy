@@ -73,6 +73,7 @@ unichain:
     publicnode: "https://unichain-sepolia-rpc.publicnode.com"
 optimism:
   mainnet:
+    fastnode: "https://public-op-mainnet.fastnode.io"
     publicnode: "https://optimism-rpc.publicnode.com"
   sepolia:
     publicnode: "https://optimism-sepolia-rpc.publicnode.com"

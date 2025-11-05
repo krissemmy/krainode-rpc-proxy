@@ -7,9 +7,11 @@ import { MethodSelect, getMethodParamsForChain } from "../components/MethodSelec
 import { JsonEditor } from "../components/JsonEditor";
 import { JsonViewer } from "../components/JsonViewer";
 import { Presets } from "../components/Presets";
+import ProviderSpotlight from "../components/ProviderSpotlight";
 import { TimeoutErrorCard } from "../components/TimeoutErrorCard";
 import { rpcFetch, type RpcBody } from "../lib/rpc";
 import { probeEndpoint } from "../lib/probe";
+import { findNetworkSpotlight } from "../lib/providerMatch";
 
 interface Provider {
   name: string;
@@ -298,6 +300,20 @@ export function Playground() {
     [selectedChain]
   );
 
+  const networkRpcs = useMemo(
+    () =>
+      selectedNetworkInfo?.providers?.map((provider) => ({
+        label: provider.name,
+        url: provider.url,
+      })) ?? [],
+    [selectedNetworkInfo]
+  );
+
+  const spotlightMeta = useMemo(
+    () => findNetworkSpotlight(selectedChain, selectedNetwork, networkRpcs),
+    [networkRpcs, selectedChain, selectedNetwork]
+  );
+
   const effectiveUrl = useMemo(() => {
     if (customUrl.trim()) return customUrl.trim();
     const net = selectedNetworkInfo;
@@ -522,6 +538,15 @@ export function Playground() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-6xl mx-auto">
+          {spotlightMeta && selectedChain && selectedNetwork && (
+            <div className="mb-6">
+              <ProviderSpotlight
+                chainId={selectedChain}
+                networkId={selectedNetwork}
+                meta={spotlightMeta}
+              />
+            </div>
+          )}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">JSON-RPC Playground</h1>
             <p className="text-gray-600 dark:text-gray-300">

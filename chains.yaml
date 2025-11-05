@@ -49,6 +49,7 @@ scroll:
     publicnode: "https://scroll-sepolia-rpc.publicnode.com"
 arbitrum:
   one:
+    fastnode: "https://public-arb-mainnet.fastnode.io"
     publicnode: "https://arbitrum-one-rpc.publicnode.com"
   nova:
     publicnode: "https://arbitrum-nova-rpc.publicnode.com"
@@ -61,6 +62,7 @@ avalanche-c-chain:
     publicnode: "https://avalanche-fuji-c-chain-rpc.publicnode.com"
 gnosis:
   mainnet:
+    fastnode: "https://public-gno-mainnet.fastnode.io"
     publicnode: "https://gnosis-rpc.publicnode.com"
   chiado:
     publicnode: "https://gnosis-chiado-rpc.publicnode.com"

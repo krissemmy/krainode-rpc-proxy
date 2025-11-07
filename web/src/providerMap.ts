@@ -1,6 +1,7 @@
 export type ProviderMeta = {
     name: string;
     website: string; // single link only
+    affiliateUrl?: string; // (preferred if present)
     logo?: string; // optional logo path
     spotlight?: boolean; // whether to show banner
     match?: {
@@ -17,6 +18,7 @@ export type ProviderMeta = {
     fastnode: {
       name: "Fastnode",
       website: "https://fastnode.io",
+      affiliateUrl: "https://fastnode.io?via=krainode",
       // logo optional; if you add one, place at /web/public/logos/fastnode.svg
       // logo: "/logos/fastnode.svg",
       spotlight: true,
@@ -31,6 +33,7 @@ export type ProviderMeta = {
     publicnode: {
         name: "Allnodes by Publicnode",
         website: "https://www.allnodes.com/",
+        affiliateUrl: "https://www.allnodes.com?via=krainode",
         // logo optional; if you add one, place at /web/public/logos/fastnode.svg
         // logo: "/logos/fastnode.svg",
         spotlight: true,
@@ -45,6 +48,7 @@ export type ProviderMeta = {
     tatum: {
       name: "Tatum",
       website: "https://tatum.io/nodes",
+      affiliateUrl: "https://www.tatum.io?via=krainode", // <-- here
       // logo optional; if you add one, place at /web/public/logos/fastnode.svg
       logo: "/logos/tatum.png",
       spotlight: true,

@@ -18,6 +18,18 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
   const [dismissed, setDismissed] = useState(false);
   const dismissTimer = useRef<number | null>(null);
 
+  let href = meta.affiliateUrl || meta.website;
+  try {
+    const u = new URL(href);
+    u.searchParams.set("utm_source", "krainode");
+    u.searchParams.set("utm_medium", "spotlight");
+    u.searchParams.set("utm_campaign", "provider");
+    u.searchParams.set("utm_content", `${chainId}-${networkId}`);
+    href = u.toString();
+  } catch {
+    // ignore invalid URLs
+  }
+
   useEffect(() => {
     if (dismissTimer.current) window.clearTimeout(dismissTimer.current);
     setDismissed(false);
@@ -81,15 +93,15 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
             </div>
 
             <div className="flex items-center gap-2">
-              <a
-                href={meta.website}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs md:text-sm px-3 py-1 rounded-xl bg-white/90 text-orange-700 font-semibold shadow hover:bg-white transition"
-                aria-label={`Visit ${meta.name} website`}
-              >
-                Visit
-              </a>
+            <a
+              href={href}
+              target="_blank"
+              rel="nofollow sponsored noopener noreferrer"
+              className="text-xs md:text-sm px-3 py-1 rounded-xl bg-white text-slate-900 hover:opacity-90 transition"
+              aria-label={`Visit ${meta.name} website`}
+            >
+              Visit
+            </a>
               <button
                 aria-label="Dismiss provider spotlight"
                 onClick={onDismiss}

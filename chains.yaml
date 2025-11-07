@@ -9,11 +9,14 @@ ethereum:
     publicnode: "https://ethereum-hoodi-rpc.publicnode.com"
 base:
   mainnet:
+    tatum: "https://base-mainnet.gateway.tatum.io"
     publicnode: "https://base-rpc.publicnode.com"
   sepolia:
+    tatum: "https://base-testnet.gateway.tatum.io"
     publicnode: "https://base-sepolia-rpc.publicnode.com"
 celo:
   mainnet:
+    tatum: "https://celo-mainnet.gateway.tatum.io"
     publicnode: "https://celo-rpc.publicnode.com"
   sepolia:
     tatum: "https://celo-sepolia.gateway.tatum.io"

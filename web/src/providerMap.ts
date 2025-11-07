@@ -41,6 +41,21 @@ export type ProviderMeta = {
           labels: ["Allnodes by Publicnode"],
           hostIncludes: ["publicnode.com"],
         },
+    },
+    tatum: {
+      name: "Tatum",
+      website: "https://tatum.io/nodes",
+      // logo optional; if you add one, place at /web/public/logos/fastnode.svg
+      logo: "/logos/tatum.png",
+      spotlight: true,
+      spotlightScopes: [
+          { chain: "base", networks: ["mainnet", "sepolia"] },
+          { chain: "celo", networks: ["mainnet", "sepolia"] },
+        ],
+      match: {
+        labels: ["Tatum"],
+        hostIncludes: ["tatum.io"],
       },
+    },
     // Add more providers here as needed, without touching chains.yaml
   };

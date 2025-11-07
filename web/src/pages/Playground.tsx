@@ -84,19 +84,20 @@ export function Playground() {
   const copyTimeoutRef = useRef<number>();
   const initialProviderSyncRef = useRef(true);
   const previousNetworkRef = useRef<string | null>(null);
+  const lastAppliedDefaultRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const storedChain = window.localStorage.getItem(STORAGE_KEYS.chain);
     const storedNetwork = window.localStorage.getItem(STORAGE_KEYS.network);
-    const storedProvider = window.localStorage.getItem(STORAGE_KEYS.provider);
+    // const storedProvider = window.localStorage.getItem(STORAGE_KEYS.provider);
     const storedCustom = window.localStorage.getItem(STORAGE_KEYS.customUrl);
     const storedCustomHeaders = window.localStorage.getItem(STORAGE_KEYS.customHeaders);
     const storedRecent = window.localStorage.getItem(STORAGE_KEYS.recent);
 
     if (storedChain) setSelectedChain(storedChain);
     if (storedNetwork) setSelectedNetwork(storedNetwork);
-    if (storedProvider) setProviderName(storedProvider);
+    // if (storedProvider) setProviderName(storedProvider);
     if (storedCustom) {
       setCustomUrl(storedCustom);
       setCustomInput(storedCustom);
@@ -214,13 +215,18 @@ export function Playground() {
     const defaultName = net.defaultProvider || net.providers[0]?.name || "";
     if (initialProviderSyncRef.current) {
       initialProviderSyncRef.current = false;
-      if (!providerName || !net.providers.some((p) => p.name === providerName)) {
-        setProviderName(defaultName);
-      }
+      // On first sync, prefer the network default. Only keep stored value if it equals the default.
+      let stored: string | null = null;
+      try { stored = window.localStorage.getItem(STORAGE_KEYS.provider); } catch {}
+      const storedIsValid = !!stored && net.providers.some((p) => p.name === stored);
+      const initial = storedIsValid && stored === defaultName ? stored! : defaultName;
+      setProviderName(initial);
       previousNetworkRef.current = net.name;
       return;
     }
-    if (previousNetworkRef.current !== net.name) {
+    const key = `${selectedChain}::${net.name}`;
+    if (lastAppliedDefaultRef.current !== key) {
+      lastAppliedDefaultRef.current = key;
       previousNetworkRef.current = net.name;
       setProviderName(defaultName);
       setCustomUrl("");

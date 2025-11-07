@@ -18,14 +18,19 @@ for (const [chainName, networks] of Object.entries(doc || {})) {
   const netArr = [];
   for (const [networkName, providersObj] of Object.entries(networks || {})) {
     const provEntries = Object.entries(providersObj || {})
-      .filter(([_, url]) => typeof url === "string" && url.startsWith("http"));
-    provEntries.sort(([a], [b]) => a.localeCompare(b));
+      .filter(([_, url]) => typeof url === "string" && /^https?:\/\//.test(url));
+
+    // 🚫 Do not sort — preserve YAML order as-authored
+    // provEntries.sort(([a], [b]) => a.localeCompare(b));
+
     const providers = provEntries.map(([name, url]) => ({ name, url }));
     if (providers.length === 0) continue;
+
     netArr.push({
       name: networkName,
       providers,
-      defaultProvider: providers[0].name
+      // First entry in YAML is the default
+      defaultProvider: providers[0].name,
     });
   }
   if (netArr.length) chains.push({ name: chainName, networks: netArr });

@@ -111,7 +111,7 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
           </div>
 
           <p className="font-semibold text-black/70">
-            Providers interested in sponsoring a network? Email{" "}
+            Providers interested in being featured for a network? Email{" "}
             <a
               href="mailto:contact@krissemmy.com"
               className="font-semibold underline decoration-black/40 underline-offset-2 hover:text-black"

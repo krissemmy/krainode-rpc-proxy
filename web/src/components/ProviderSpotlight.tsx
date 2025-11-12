@@ -80,9 +80,6 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
                 {marqueeItems.map((_, index) => (
                   <div key={index} className="flex items-center gap-3 text-sm font-medium">
                     <span aria-hidden className="text-xl leading-none">🔥🔥</span>
-                    <span className="text-[10px] uppercase tracking-[0.15em] px-2 py-0.5 rounded-full bg-black/10 border border-black/15 text-black">
-                      Sponsored
-                    </span>
                     <span className="text-sm text-black">
                       <span className="font-semibold text-black">{meta.name}</span> is live for {`${chainId.charAt(0).toUpperCase() + chainId.slice(1)}`} {`${networkId.charAt(0).toUpperCase() + networkId.slice(1)}`}......low-latency, high-uptime RPCs built for production workloads.{" "}
                       </span>

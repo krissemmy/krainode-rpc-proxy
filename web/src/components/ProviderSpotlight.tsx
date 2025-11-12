@@ -109,7 +109,7 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
               </button>
             </div>
           </div>
-
+{/* 
           <p className="font-semibold text-black/70">
             Providers interested in being featured for a network? Email{" "}
             <a
@@ -119,7 +119,7 @@ export default function ProviderSpotlight({ chainId, networkId, meta }: Provider
               contact@krissemmy.com
             </a>
             .
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

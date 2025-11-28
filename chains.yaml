@@ -85,3 +85,8 @@ plasma:
     plasma-mainnet-beta: "https://rpc.plasma.to"
   testnet:
     plasma-testnet: "https://testnet-rpc.plasma.to"
+monad:
+  mainnet:
+    tatum: "https://monad-mainnet.gateway.tatum.io"
+  testnet:
+    tatum: "https://monad-testnet.gateway.tatum.io"

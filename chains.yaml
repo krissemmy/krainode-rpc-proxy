@@ -90,3 +90,17 @@ monad:
     tatum: "https://monad-mainnet.gateway.tatum.io"
   testnet:
     tatum: "https://monad-testnet.gateway.tatum.io"
+hyperevm:
+  mainnet:
+    hyperliquid: "https://rpc.hyperliquid.xyz/evm"
+    hypurrscan: "http://rpc.hypurrscan.io/"
+    stakely: "https://hyperliquid-json-rpc.stakely.io/"
+    drpc: "https://hyperliquid.drpc.org"
+  testnet:
+    hyperliquid: "https://rpc.hyperliquid-testnet.xyz/evm"
+    drpc: "https://hyperliquid-testnet.drpc.org"
+berachain:
+  mainnet:
+    publicnode: "https://berachain-rpc.publicnode.com"
+  bepolia:
+    publicnode: "https://berachain-bepolia-rpc.publicnode.com"

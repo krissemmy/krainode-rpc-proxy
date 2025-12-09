@@ -93,7 +93,6 @@ monad:
 hyperevm:
   mainnet:
     hyperliquid: "https://rpc.hyperliquid.xyz/evm"
-    hypurrscan: "http://rpc.hypurrscan.io/"
     stakely: "https://hyperliquid-json-rpc.stakely.io/"
     drpc: "https://hyperliquid.drpc.org"
   testnet:

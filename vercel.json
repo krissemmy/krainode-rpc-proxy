@@ -1,6 +1,6 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/" }
-    ]
+    "root": "web",
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
   }
-  

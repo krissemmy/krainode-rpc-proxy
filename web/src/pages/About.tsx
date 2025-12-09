@@ -34,11 +34,11 @@ export default function About() {
                 X/Twitter
               </a>
               <a
-                href="mailto:contact@krissemmy.com"
+                href="mailto:emmvnuel.christopher@gmail.com"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 text-sm font-semibold text-white shadow transition hover:bg-primary-500 sm:text-base"
               >
                 <Mail className="h-5 w-5" />
-                contact@krissemmy.com
+                emmvnuel.christopher@gmail.com
               </a>
               <a
                 href="https://github.com/krissemmy/krainode-rpc-proxy"

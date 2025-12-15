@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ExternalLink, Layers, ShieldCheck, Zap } from "lucide-react";
 import { CodeTabs } from "@/components/CodeTabs";
 import { Container, Section } from "@/components/layout";
+import { HOME_STATS } from "@/data/stats";
+
 
 interface ChainNetwork {
   name: string;
@@ -133,6 +135,17 @@ export function Home() {
             <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
               Choose from curated public providers or bring your own endpoint. The playground talks to your nodes directly........no proxy, no API keys.
             </p>
+            <div className="mt-5 flex flex-wrap gap-3 text-sm text-muted-foreground">
+              <span className="rounded-full border border-border bg-white/70 px-3 py-1 dark:bg-gray-900/50">
+                Trusted by <span className="font-semibold text-foreground">{HOME_STATS.developers}</span> developers
+              </span>
+              <span className="rounded-full border border-border bg-white/70 px-3 py-1 dark:bg-gray-900/50">
+                <span className="font-semibold text-foreground">{HOME_STATS.networks}</span> networks
+              </span>
+              <span className="rounded-full border border-border bg-white/70 px-3 py-1 dark:bg-gray-900/50">
+                Updated {HOME_STATS.updated}
+              </span>
+            </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/playground"

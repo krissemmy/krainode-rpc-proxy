@@ -33,6 +33,11 @@ blast:
     publicnode: "https://blast-rpc.publicnode.com"
   sepolia:
     blastapi: "https://blastl2-sepolia.public.blastapi.io"
+bnb(bsc):
+  mainnet:
+    publicnode: "https://bsc-rpc.publicnode.com"
+  testnet:
+    publicnode: "https://bsc-testnet-rpc.publicnode.com"
 celo:
   mainnet:
     tatum: "https://celo-mainnet.gateway.tatum.io"
@@ -77,6 +82,11 @@ monad:
     tatum: "https://monad-mainnet.gateway.tatum.io"
   testnet:
     tatum: "https://monad-testnet.gateway.tatum.io"
+opBNB:
+  mainnet:
+    publicnode: "https://opbnb-rpc.publicnode.com"
+  testnet:
+    publicnode: "https://opbnb-testnet-rpc.publicnode.com"
 optimism:
   mainnet:
     fastnode: "https://public-op-mainnet.fastnode.io"
@@ -88,6 +98,11 @@ plasma:
     plasma-mainnet-beta: "https://rpc.plasma.to"
   testnet:
     plasma-testnet: "https://testnet-rpc.plasma.to"
+pulsechain:
+  mainnet:
+    publicnode: "https://pulsechain-rpc.publicnode.com"
+  testnet:
+    publicnode: "https://pulsechain-testnet-rpc.publicnode.com"
 sei-evm:
   mainnet:
     publicnode: "https://sei-evm-rpc.publicnode.com"
@@ -98,6 +113,16 @@ scroll:
     publicnode: "https://scroll-rpc.publicnode.com"
   sepolia:
     publicnode: "https://scroll-sepolia-rpc.publicnode.com"
+sonic:
+  mainnet:
+    publicnode: "https://sonic-rpc.publicnode.com:443"
+  testnet-blaze:
+    publicnode: "https://sonic-blaze-rpc.publicnode.com:443"
+taiko:
+  mainnet:
+    publicnode: "https://taiko-rpc.publicnode.com"
+  hoodi:
+    publicnode: "https://taiko-hoodi-rpc.publicnode.com"
 tempo:
   testnet:
     tempo-public: "https://rpc.testnet.tempo.xyz"

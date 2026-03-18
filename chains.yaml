@@ -124,8 +124,10 @@ taiko:
   hoodi:
     publicnode: "https://taiko-hoodi-rpc.publicnode.com"
 tempo:
+  mainnet:
+    tempo-public: "https://rpc.tempo.xyz"
   testnet:
-    tempo-public: "https://rpc.testnet.tempo.xyz"
+    tempo-public: "https://rpc.moderato.tempo.xyz"
 unichain:
   mainnet:
     publicnode: "https://unichain-rpc.publicnode.com"

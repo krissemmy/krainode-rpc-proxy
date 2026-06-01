@@ -229,3 +229,9 @@ Thumbs.db
 
 # custom
 ec2_instance_deploy.sh
+
+.gstack/
+AGENTS.MD
+CLAUDE.md
+DESIGN.md
+web/qa-screenshots

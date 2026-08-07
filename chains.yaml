@@ -77,6 +77,11 @@ mantle:
     publicnode: "https://mantle-rpc.publicnode.com"
   sepolia:
     mantlepublic: "https://rpc.sepolia.mantle.xyz/m"
+metis:
+  mainnet:
+    publicnode: "https://metis-rpc.publicnode.com:443"
+  sepolia:
+    publicnode: "https://metis-sepolia-rpc.publicnode.com:443"
 monad:
   mainnet:
     tatum: "https://monad-mainnet.gateway.tatum.io"
@@ -103,6 +108,11 @@ pulsechain:
     publicnode: "https://pulsechain-rpc.publicnode.com"
   testnet:
     publicnode: "https://pulsechain-testnet-rpc.publicnode.com"
+robinhood:
+  mainnet:
+    publicnode: "https://robinhood-rpc.publicnode.com"
+  sepolia:
+    publicnode: "https://robinhood-sepolia-rpc.publicnode.com"
 sei-evm:
   mainnet:
     publicnode: "https://sei-evm-rpc.publicnode.com"

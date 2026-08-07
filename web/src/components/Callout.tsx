@@ -10,17 +10,16 @@ export function Callout({
   children: ReactNode;
 }) {
   const styles = {
-    tip: "border-emerald-500/30 bg-emerald-500/5",
-    note: "border-blue-500/30 bg-blue-500/5",
-    warning: "border-amber-500/30 bg-amber-500/5",
+    tip: "border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/20",
+    note: "border-primary-500 bg-primary-50/70 dark:bg-primary-950/20",
+    warning: "border-amber-500 bg-amber-50/70 dark:bg-amber-950/20",
   }[type];
 
   return (
-    <div className={`my-4 rounded-xl border p-4 ${styles}`}>
-      {title && <div className="font-medium mb-1">{title}</div>}
-      <div className="text-sm leading-6">{children}</div>
+    <div className={`not-prose my-5 border-l-2 px-4 py-3.5 ${styles}`}>
+      {title && <div className="mb-1 text-sm font-semibold text-foreground">{title}</div>}
+      <div className="text-sm leading-6 text-muted-foreground">{children}</div>
     </div>
   );
 }
-
 

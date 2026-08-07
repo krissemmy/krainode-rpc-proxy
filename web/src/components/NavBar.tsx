@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { ArrowRight, Moon, Sun } from "lucide-react";
 import { Container } from "@/components/layout";
 
 type NavItem = { to: string; label: string };
@@ -47,14 +47,14 @@ export default function NavBar() {
     const isActive = location.pathname === item.to;
     const base =
       variant === "desktop"
-        ? "inline-flex items-center rounded-xl px-3 py-1.5 text-sm font-medium transition sm:text-base"
+        ? "inline-flex h-14 items-center border-b-2 px-2 text-sm font-medium transition-colors"
         : "rounded-xl px-4 py-2 text-base font-medium transition";
     const color = isActive
       ? variant === "desktop"
-        ? "text-foreground"
+        ? "border-primary-500 text-foreground"
         : "bg-gray-100 text-foreground dark:bg-gray-800"
       : variant === "desktop"
-        ? "text-muted-foreground hover:text-foreground"
+        ? "border-transparent text-muted-foreground hover:border-gray-300 hover:text-foreground dark:hover:border-gray-700"
         : "text-foreground hover:bg-gray-100 dark:hover:bg-gray-800";
 
     return (
@@ -73,9 +73,12 @@ export default function NavBar() {
     <>
       <header className="sticky top-0 z-50 border-b border-border bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-gray-950/80 dark:supports-[backdrop-filter]:bg-gray-950/60">
         <Container className="flex h-14 items-center justify-between gap-3 pt-[env(safe-area-inset-top)]">
-          <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+          <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
             <img src="/images/logo_icon.svg" alt="KraiNode" className="h-6 w-auto" />
-            <span className="hidden text-sm font-medium text-foreground sm:inline">KraiNode</span>
+            <span className="hidden sm:block">
+              <span className="block text-sm font-semibold leading-4 text-foreground">KraiNode</span>
+              <span className="block text-[10px] leading-4 text-muted-foreground">Blockchain request workspace</span>
+            </span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -91,6 +94,15 @@ export default function NavBar() {
               >
                 {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
+              {location.pathname !== "/playground" && (
+                <Link
+                  to="/playground"
+                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                >
+                  Open playground
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              )}
             </div>
 
             <button

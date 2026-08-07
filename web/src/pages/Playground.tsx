@@ -45,12 +45,19 @@ const STORAGE_KEYS = {
   chain: "krainode:lastChain",
   network: "krainode:lastNetwork",
   provider: "krainode:lastProvider",
-  customUrl: "krainode:customUrl",
-  customHeaders: "krainode:customHeaders",
   recent: "krainode:recent"
 } as const;
 
 const MAX_RECENT = 25;
+
+function safeEndpointLabel(endpointUrl: string) {
+  try {
+    const url = new URL(endpointUrl);
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return "Custom endpoint";
+  }
+}
 
 export function Playground() {
   const [chainDetails, setChainDetails] = useState<ChainDetails[]>([]);
@@ -91,26 +98,24 @@ export function Playground() {
     const storedChain = window.localStorage.getItem(STORAGE_KEYS.chain);
     const storedNetwork = window.localStorage.getItem(STORAGE_KEYS.network);
     // const storedProvider = window.localStorage.getItem(STORAGE_KEYS.provider);
-    const storedCustom = window.localStorage.getItem(STORAGE_KEYS.customUrl);
-    const storedCustomHeaders = window.localStorage.getItem(STORAGE_KEYS.customHeaders);
     const storedRecent = window.localStorage.getItem(STORAGE_KEYS.recent);
 
     if (storedChain) setSelectedChain(storedChain);
     if (storedNetwork) setSelectedNetwork(storedNetwork);
     // if (storedProvider) setProviderName(storedProvider);
-    if (storedCustom) {
-      setCustomUrl(storedCustom);
-      setCustomInput(storedCustom);
-    }
-    if (storedCustomHeaders) {
-      setCustomHeaders(storedCustomHeaders);
-      setCustomHeadersInput(storedCustomHeaders);
-    }
+    // Remove credentials persisted by older builds. Custom endpoints and headers are session-only.
+    window.localStorage.removeItem("krainode:customUrl");
+    window.localStorage.removeItem("krainode:customHeaders");
     if (storedRecent) {
       try {
         const parsed = JSON.parse(storedRecent) as RecentRun[];
         if (Array.isArray(parsed)) {
-          setRecentRuns(parsed.slice(0, MAX_RECENT));
+          setRecentRuns(
+            parsed.slice(0, MAX_RECENT).map((run) => ({
+              ...run,
+              endpointUrl: safeEndpointLabel(run.endpointUrl),
+            }))
+          );
         }
       } catch (err) {
         console.warn("Failed to parse stored recents", err);
@@ -217,7 +222,11 @@ export function Playground() {
       initialProviderSyncRef.current = false;
       // On first sync, prefer the network default. Only keep stored value if it equals the default.
       let stored: string | null = null;
-      try { stored = window.localStorage.getItem(STORAGE_KEYS.provider); } catch {}
+      try {
+        stored = window.localStorage.getItem(STORAGE_KEYS.provider);
+      } catch {
+        stored = null;
+      }
       const storedIsValid = !!stored && net.providers.some((p) => p.name === stored);
       const initial = storedIsValid && stored === defaultName ? stored! : defaultName;
       setProviderName(initial);
@@ -239,7 +248,7 @@ export function Playground() {
     if (!net.providers.some((p) => p.name === providerName)) {
       setProviderName(defaultName);
     }
-  }, [selectedNetworkInfo, providerName]);
+  }, [selectedChain, selectedNetworkInfo, providerName]);
 
   useEffect(() => {
     const methods = Object.keys(getMethodParamsForChain(selectedChain));
@@ -273,24 +282,6 @@ export function Playground() {
     if (typeof window === "undefined") return;
     if (providerName) window.localStorage.setItem(STORAGE_KEYS.provider, providerName);
   }, [providerName]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (customUrl) {
-      window.localStorage.setItem(STORAGE_KEYS.customUrl, customUrl);
-    } else {
-      window.localStorage.removeItem(STORAGE_KEYS.customUrl);
-    }
-  }, [customUrl]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (customHeaders) {
-      window.localStorage.setItem(STORAGE_KEYS.customHeaders, customHeaders);
-    } else {
-      window.localStorage.removeItem(STORAGE_KEYS.customHeaders);
-    }
-  }, [customHeaders]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -359,7 +350,13 @@ export function Playground() {
   const recordRecent = (ok: boolean, method: string, endpointUrl: string, latency: number) => {
     if (!endpointUrl) return;
     setRecentRuns((prev) => {
-      const entry: RecentRun = { endpointUrl, method, ok, timestamp: Date.now(), latency };
+      const entry: RecentRun = {
+        endpointUrl: safeEndpointLabel(endpointUrl),
+        method,
+        ok,
+        timestamp: Date.now(),
+        latency,
+      };
       return [entry, ...prev].slice(0, MAX_RECENT);
     });
   };
@@ -432,10 +429,7 @@ export function Playground() {
         setError(message === "Unexpected end of JSON input" ? "Invalid JSON in request body." : message);
       }
       
-      const methodName = Array.isArray(JSON.parse(requestJson))
-        ? (JSON.parse(requestJson)[0]?.method as string | undefined) ?? selectedMethod
-        : ((JSON.parse(requestJson) as RpcBody).method ?? selectedMethod);
-      recordRecent(false, methodName, effectiveUrl, latency);
+      recordRecent(false, selectedMethod, effectiveUrl, latency);
     } finally {
       setIsLoading(false);
     }
@@ -514,8 +508,8 @@ export function Playground() {
       window.localStorage.removeItem(STORAGE_KEYS.chain);
       window.localStorage.removeItem(STORAGE_KEYS.network);
       window.localStorage.removeItem(STORAGE_KEYS.provider);
-      window.localStorage.removeItem(STORAGE_KEYS.customUrl);
-      window.localStorage.removeItem(STORAGE_KEYS.customHeaders);
+      window.localStorage.removeItem("krainode:customUrl");
+      window.localStorage.removeItem("krainode:customHeaders");
       window.localStorage.removeItem(STORAGE_KEYS.recent);
     }
     setRecentRuns([]);
@@ -846,7 +840,7 @@ export function Playground() {
                   </h3>
                 </div>
                 {recentRuns.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Your last 25 requests will appear here.</p>
+                  <p className="text-sm text-muted-foreground">Your last 25 requests will appear here. Credential-bearing URL paths are not saved.</p>
                 ) : (
                   <div className="max-h-96 overflow-y-auto">
                     <ul className="space-y-2">

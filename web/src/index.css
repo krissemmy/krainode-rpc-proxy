@@ -246,3 +246,26 @@ body {
 
 /* Images */
 img, svg { max-width: 100%; height: auto; }
+
+@layer components {
+  .docs-content > section + section {
+    @apply mt-16 border-t border-border pt-14 sm:mt-20 sm:pt-16;
+  }
+
+  .docs-content h2 {
+    @apply mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl;
+  }
+
+  .docs-content h2 + p,
+  .docs-content section > p:not(.docs-kicker) {
+    @apply mt-4 text-[15px] leading-7 text-muted-foreground sm:text-base;
+  }
+
+  .docs-content code {
+    @apply font-mono text-[0.9em];
+  }
+
+  .docs-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-primary-600 dark:text-primary-400;
+  }
+}

@@ -3,32 +3,39 @@ import { CopyButton } from "./CopyButton";
 
 export function DocsCodeTabs({
   tabs,
+  title = "Request",
 }: {
   tabs: { label: string; code: string }[];
+  title?: string;
 }) {
   const [active, setActive] = useState(0);
-  const current = tabs[active];
+  const current = tabs[active] ?? tabs[0];
+  if (!current) return null;
+
   return (
-    <div className="my-4 rounded-xl border">
-      <div className="flex items-center justify-between border-b p-2">
-        <div className="flex gap-2">
-          {tabs.map((t, i) => (
-            <button
-              key={t.label}
-              onClick={() => setActive(i)}
-              className={`text-xs px-2 py-1 rounded ${i === active ? "bg-white/10" : "hover:bg-white/5"}`}
-              aria-current={i === active}
-              type="button"
-            >
-              {t.label}
-            </button>
-          ))}
+    <div className="not-prose my-5 overflow-hidden rounded-xl border border-gray-800 bg-[#0b0e14] text-gray-100 shadow-sm">
+      <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/10 px-3">
+        <div className="flex min-w-0 items-center gap-3 overflow-x-auto">
+          <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500 sm:inline">{title}</span>
+          <div className="flex h-11 items-stretch">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab.label}
+                onClick={() => setActive(index)}
+                className={`relative shrink-0 px-3 text-xs font-medium transition-colors ${index === active ? "text-white" : "text-gray-500 hover:text-gray-300"}`}
+                aria-selected={index === active}
+                role="tab"
+                type="button"
+              >
+                {tab.label}
+                {index === active && <span className="absolute inset-x-2 bottom-0 h-px bg-primary-400" />}
+              </button>
+            ))}
+          </div>
         </div>
         <CopyButton text={current.code} />
       </div>
-      <pre className="p-4 overflow-x-auto text-sm"><code>{current.code}</code></pre>
+      <pre className="max-h-[420px] overflow-auto p-4 text-[13px] leading-6 sm:p-5"><code>{current.code}</code></pre>
     </div>
   );
 }
-
-

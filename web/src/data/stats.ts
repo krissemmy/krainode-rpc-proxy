@@ -1,6 +1,6 @@
 export const HOME_STATS = {
-    developers: "400+",
+    developers: "500+",
     networks: "15+",
-    updated: "Dec 2025",
+    updated: "July 2026",
   } as const;
   

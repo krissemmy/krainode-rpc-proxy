@@ -9,9 +9,11 @@ export function CopyButton({ text }: { text: string }) {
           await navigator.clipboard.writeText(text);
           setCopied(true);
           setTimeout(() => setCopied(false), 1200);
-        } catch {}
+        } catch {
+          setCopied(false);
+        }
       }}
-      className="text-xs rounded-md border px-2 py-1 hover:bg-white/5"
+      className="shrink-0 rounded-md border border-white/10 px-2 py-1 text-xs text-gray-400 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white"
       aria-label="Copy to clipboard"
       type="button"
     >
@@ -19,5 +21,3 @@ export function CopyButton({ text }: { text: string }) {
     </button>
   );
 }
-
-

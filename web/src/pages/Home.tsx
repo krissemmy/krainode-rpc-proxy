@@ -137,7 +137,7 @@ export function Home() {
             </p>
             <div className="mt-5 flex flex-wrap gap-3 text-sm text-muted-foreground">
               <span className="rounded-full border border-border bg-white/70 px-3 py-1 dark:bg-gray-900/50">
-                Trusted by <span className="font-semibold text-foreground">{HOME_STATS.developers}</span> developers
+                Used by <span className="font-semibold text-foreground">{HOME_STATS.users}</span> users since Sep 2025
               </span>
               <span className="rounded-full border border-border bg-white/70 px-3 py-1 dark:bg-gray-900/50">
                 <span className="font-semibold text-foreground">{HOME_STATS.networks}</span> networks

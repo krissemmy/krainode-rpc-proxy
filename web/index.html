@@ -20,20 +20,44 @@
     <meta property="og:url" content="https://krainode.krissemmy.com/" />
     <meta property="og:title" content="KraiNode - The Postman for blockchain RPCs" />
     <meta property="og:description" content="Test and debug blockchain JSON-RPC calls in your browser. KraiNode helps developers explore, compare, and measure latency across multiple providers — no backend or API key storage." />
-    <meta property="og:image" content="/og.png" />
+    <meta property="og:site_name" content="KraiNode" />
+    <!-- Social scrapers need an absolute image URL. -->
+    <meta property="og:image" content="https://krainode.krissemmy.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <meta property="og:image" content="/og.png" />
-
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://x.com/krainode_web3" />
+    <meta property="twitter:site" content="@krainode_web3" />
+    <meta property="twitter:url" content="https://krainode.krissemmy.com/" />
     <meta property="twitter:title" content="KraiNode - The Postman for blockchain RPCs" />
     <meta property="twitter:description" content="Test and debug blockchain JSON-RPC calls in your browser. KraiNode helps developers explore, compare, and measure latency across multiple providers — no backend or API key storage." />
     <!-- <meta property="twitter:image" content="/og.svg" /> -->
-    <meta property="twitter:image" content="/og.png" />
-    
+    <meta property="twitter:image" content="https://krainode.krissemmy.com/og.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "KraiNode",
+        "url": "https://krainode.krissemmy.com/",
+        "description": "Browser-based JSON-RPC playground for testing and debugging blockchain RPC endpoints. Requests go directly from the browser to the provider you choose, with no backend or API key storage.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "license": "https://opensource.org/licenses/MIT",
+        "sameAs": ["https://github.com/krissemmy/krainode-rpc-proxy", "https://x.com/krainode_web3"],
+        "author": {
+          "@type": "Person",
+          "@id": "https://www.krissemmy.com/#person",
+          "name": "Emmanuel Christopher",
+          "url": "https://www.krissemmy.com"
+        }
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,6 +74,35 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- The app renders client-side. This gives crawlers and AI assistants that
+         do not run JavaScript a real description instead of an empty page. -->
+    <noscript>
+      <h1>KraiNode: test JSON-RPC endpoints without leaving the browser</h1>
+      <p>
+        KraiNode is a free, open-source JSON-RPC playground for blockchain developers, like Postman for
+        blockchain RPCs. Choose a network, test an endpoint, edit raw JSON-RPC, and inspect the response in
+        one place. Requests travel directly from your browser to the selected RPC endpoint. KraiNode has no
+        application backend that receives, stores, or relays them.
+      </p>
+      <ul>
+        <li>Probe an endpoint for CORS and connectivity before sending a heavier request.</li>
+        <li>Switch between bundled public providers or use your own HTTP endpoint.</li>
+        <li>Edit single or batch JSON-RPC payloads and inspect structured responses and latency.</li>
+        <li>Works with Ethereum, Arbitrum, Base, Optimism, BNB Chain, Avalanche, Linea, Scroll, and other networks.</li>
+      </ul>
+      <p>
+        <a href="https://krainode.krissemmy.com/playground">Playground</a> ·
+        <a href="https://krainode.krissemmy.com/docs">Documentation</a> ·
+        <a href="https://krainode.krissemmy.com/about">About</a> ·
+        <a href="https://github.com/krissemmy/krainode-rpc-proxy">Source code (MIT)</a>
+      </p>
+      <p>
+        Built by <a href="https://www.krissemmy.com">Emmanuel Christopher</a>, a Cloud Platform / DevOps
+        Engineer who also offers
+        <a href="https://www.krissemmy.com/consulting">infrastructure consulting for early-stage startups</a>.
+        KraiNode needs JavaScript to run.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

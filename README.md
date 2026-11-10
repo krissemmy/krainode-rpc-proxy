@@ -5,6 +5,8 @@ Postman-style JSON-RPC playground for testing blockchain RPC endpoints. It is 10
 👉 Live playground: [https://krainode.krissemmy.com/playground](https://krainode.krissemmy.com/playground)
 👉 Docs page (local): http://localhost:3000/docs
 
+Built and maintained by [Emmanuel Christopher](https://www.krissemmy.com), who also does [infrastructure consulting for early-stage startups](https://www.krissemmy.com/consulting).
+
 ## Highlights
 - Multi-chain: curated endpoints across public/test networks
 - Provider choice: use bundled endpoints or your own URL

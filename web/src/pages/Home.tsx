@@ -89,11 +89,7 @@ print(response.json()["result"])`,
 ] as const;
 
 export function Home() {
-  usePageMeta(
-    "KraiNode - The Postman for blockchain RPCs",
-    "Test and debug blockchain JSON-RPC calls in your browser. KraiNode helps developers explore, compare, and measure latency across multiple providers — no backend or API key storage.",
-    "/",
-  );
+  usePageMeta("/");
   const [chains, setChains] = useState<ChainDetail[]>([]);
   const [isLoadingChains, setIsLoadingChains] = useState(true);
   const [chainError, setChainError] = useState<string | null>(null);

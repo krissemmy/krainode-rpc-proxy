@@ -12,6 +12,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
+    // No browser during the build-time prerender.
+    if (typeof window === 'undefined') return 'light'
     // Check localStorage first, then system preference
     const saved = localStorage.getItem('theme') as Theme
     if (saved) return saved

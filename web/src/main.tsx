@@ -7,7 +7,9 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 import App from './App.tsx'
 import './index.css'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const container = document.getElementById('root')!
+
+const app = (
   <React.StrictMode>
     <PostHogProvider
       apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
@@ -25,5 +27,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <SpeedInsights />
       </BrowserRouter>
     </PostHogProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
+
+// Prerendered routes ship their HTML, so attach to it. The dev server and the
+// fallback shell start with an empty root and render from scratch.
+if (container.hasChildNodes()) {
+  ReactDOM.hydrateRoot(container, app)
+} else {
+  ReactDOM.createRoot(container).render(app)
+}

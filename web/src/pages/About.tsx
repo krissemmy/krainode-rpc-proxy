@@ -8,11 +8,7 @@ import { usePageMeta } from "@/lib/pageMeta";
 const advisors: typeof teamMembers = [];
 
 export default function About() {
-  usePageMeta(
-    "About KraiNode: Open-Source RPC Playground by Emmanuel Christopher",
-    "KraiNode is an open-source JSON-RPC playground for Web3 developers, built by Emmanuel Christopher. Ping any chain, inspect responses, and debug RPC endpoints from the browser.",
-    "/about",
-  );
+  usePageMeta("/about");
   return (
     <div className="bg-background text-foreground">
       <Section>

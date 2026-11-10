@@ -12,6 +12,19 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Apply the saved or system theme before first paint, so prerendered
+         pages do not flash light for dark-mode visitors. -->
+    <script>
+      try {
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme ? savedTheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
+    <!-- Title, description, canonical and the og/twitter url tags below are the
+         home page's; scripts/prerender.mjs swaps them per route from src/lib/pageMeta.ts. -->
+    <link rel="canonical" href="https://krainode.krissemmy.com/" />
     <title>KraiNode - The Postman for blockchain RPCs</title>
     <meta name="description" content="Test and debug blockchain JSON-RPC calls in your browser. KraiNode helps developers explore, compare, and measure latency across multiple providers — no backend or API key storage." />
 
@@ -73,36 +86,8 @@
     </script>
   </head>
   <body>
+    <!-- Must stay exactly this: scripts/prerender.mjs fills it with each route's HTML at build time. -->
     <div id="root"></div>
-    <!-- The app renders client-side. This gives crawlers and AI assistants that
-         do not run JavaScript a real description instead of an empty page. -->
-    <noscript>
-      <h1>KraiNode: test JSON-RPC endpoints without leaving the browser</h1>
-      <p>
-        KraiNode is a free, open-source JSON-RPC playground for blockchain developers, like Postman for
-        blockchain RPCs. Choose a network, test an endpoint, edit raw JSON-RPC, and inspect the response in
-        one place. Requests travel directly from your browser to the selected RPC endpoint. KraiNode has no
-        application backend that receives, stores, or relays them.
-      </p>
-      <ul>
-        <li>Probe an endpoint for CORS and connectivity before sending a heavier request.</li>
-        <li>Switch between bundled public providers or use your own HTTP endpoint.</li>
-        <li>Edit single or batch JSON-RPC payloads and inspect structured responses and latency.</li>
-        <li>Works with Ethereum, Arbitrum, Base, Optimism, BNB Chain, Avalanche, Linea, Scroll, and other networks.</li>
-      </ul>
-      <p>
-        <a href="https://krainode.krissemmy.com/playground">Playground</a> ·
-        <a href="https://krainode.krissemmy.com/docs">Documentation</a> ·
-        <a href="https://krainode.krissemmy.com/about">About</a> ·
-        <a href="https://github.com/krissemmy/krainode-rpc-proxy">Source code (MIT)</a>
-      </p>
-      <p>
-        Built by <a href="https://www.krissemmy.com">Emmanuel Christopher</a>, a Cloud Platform / DevOps
-        Engineer who also offers
-        <a href="https://www.krissemmy.com/consulting">infrastructure consulting for early-stage startups</a>.
-        KraiNode needs JavaScript to run.
-      </p>
-    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

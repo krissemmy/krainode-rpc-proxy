@@ -1,0 +1,34 @@
+# KraiNode
+
+> KraiNode is a free, open-source, browser-based JSON-RPC playground for testing and debugging blockchain RPC endpoints, like Postman for blockchain RPCs. Requests travel directly from the browser to the RPC endpoint you choose. KraiNode has no application backend that receives, stores, or relays them, and it does not store API keys.
+
+## What it does
+
+- Probe an endpoint for CORS and connectivity before sending a heavier request.
+- Switch between bundled public providers per network, or use your own HTTP endpoint.
+- Edit single or batch JSON-RPC payloads and inspect structured responses and latency.
+- Keep recent request metadata locally in the browser.
+
+Bundled endpoints cover Ethereum, Arbitrum, Base, Optimism, BNB Chain, Avalanche C-Chain, Linea, Scroll, Gnosis, Celo, Mantle, Monad, Berachain, HyperEVM, Unichain, and other networks. The current list is in chains.yaml in the repository.
+
+## What it deliberately does not do
+
+- Cloud accounts, team workspaces, or synced collections.
+- A server-side proxy for endpoints that block browser requests.
+- Wallet custody, private-key management, or transaction signing.
+- Background monitors or scheduled requests.
+
+## Links
+
+- [Playground](https://krainode.krissemmy.com/playground): send JSON-RPC requests from the browser.
+- [Documentation](https://krainode.krissemmy.com/docs): first request, request anatomy, endpoints and headers, reading blocks and contract state, filtering event logs, batch requests, diagnosing errors, privacy and limits.
+- [About](https://krainode.krissemmy.com/about)
+- [Source code](https://github.com/krissemmy/krainode-rpc-proxy): MIT licensed.
+
+## Author
+
+KraiNode is built and maintained by Emmanuel Christopher (krissemmy), a Cloud Platform / DevOps Engineer who also runs independent infrastructure consulting for early-stage startups.
+
+- Website: https://www.krissemmy.com
+- Infrastructure consulting: https://www.krissemmy.com/consulting
+- GitHub: https://github.com/krissemmy

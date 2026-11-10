@@ -12,6 +12,7 @@ import { TimeoutErrorCard } from "../components/TimeoutErrorCard";
 import { rpcFetch, type RpcBody } from "../lib/rpc";
 import { probeEndpoint } from "../lib/probe";
 import { findNetworkSpotlight } from "../lib/providerMatch";
+import { usePageMeta } from "../lib/pageMeta";
 
 interface Provider {
   name: string;
@@ -60,6 +61,11 @@ function safeEndpointLabel(endpointUrl: string) {
 }
 
 export function Playground() {
+  usePageMeta(
+    "JSON-RPC Playground for Blockchain RPC Endpoints | KraiNode",
+    "Send raw JSON-RPC requests to Ethereum, Base, Arbitrum, and other chains from your browser. Probe endpoints, switch providers or use your own URL, and inspect responses and latency.",
+    "/playground",
+  );
   const [chainDetails, setChainDetails] = useState<ChainDetails[]>([]);
   const [chainsLoading, setChainsLoading] = useState(true);
   const [chainsError, setChainsError] = useState<string | null>(null);

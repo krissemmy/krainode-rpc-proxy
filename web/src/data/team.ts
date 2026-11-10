@@ -17,6 +17,7 @@ export const teamMembers: TeamMember[] = [
     role: "Founder & Node Infrastructure Engineer",
     bio: "Operator of high-availability RPC, data, and observability stacks across multiple chains.",
     socials: [
+      { label: "Website", url: "https://www.krissemmy.com" },
       { label: "GitHub", url: "https://github.com/krissemmy" },
       { label: "LinkedIn", url: "https://linkedin.com/in/emmanuel-christopher" },
       { label: "X", url: "https://x.com/chris__emma" },

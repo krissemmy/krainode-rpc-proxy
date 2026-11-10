@@ -5,6 +5,7 @@ import { Container } from "@/components/layout";
 import DocsSidebar, { DocSection } from "@/components/DocsSidebar";
 import { DocsCodeTabs } from "@/components/DocsCodeTabs";
 import { Callout } from "@/components/Callout";
+import { usePageMeta } from "@/lib/pageMeta";
 
 const BLOCK_NUMBER_REQUEST = `{
   "jsonrpc": "2.0",
@@ -50,6 +51,11 @@ function TryInPlayground({ method, body }: { method: string; body: string }) {
 }
 
 export default function DocsPage() {
+  usePageMeta(
+    "Docs: Send, Inspect, and Debug Blockchain JSON-RPC Requests | KraiNode",
+    "KraiNode is a browser-native request workspace for blockchain developers. Learn to test an endpoint, read blocks and contract state, filter event logs, batch requests, and diagnose RPC errors.",
+    "/docs",
+  );
   const [activeId, setActiveId] = useState(sections[0].id);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sectionIds = useMemo(() => sections.map((section) => section.id), []);

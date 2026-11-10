@@ -3,10 +3,16 @@ import { Mail, Twitter, Github } from "lucide-react";
 import { TeamCard } from "@/components/TeamCard";
 import { teamMembers } from "@/data/team";
 import { Container, Section } from "@/components/layout";
+import { usePageMeta } from "@/lib/pageMeta";
 
 const advisors: typeof teamMembers = [];
 
 export default function About() {
+  usePageMeta(
+    "About KraiNode: Open-Source RPC Playground by Emmanuel Christopher",
+    "KraiNode is an open-source JSON-RPC playground for Web3 developers, built by Emmanuel Christopher. Ping any chain, inspect responses, and debug RPC endpoints from the browser.",
+    "/about",
+  );
   return (
     <div className="bg-background text-foreground">
       <Section>

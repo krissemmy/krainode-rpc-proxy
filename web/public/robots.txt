@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://krainode.krissemmy.com/sitemap.xml

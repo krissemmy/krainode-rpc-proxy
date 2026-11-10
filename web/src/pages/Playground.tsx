@@ -61,11 +61,7 @@ function safeEndpointLabel(endpointUrl: string) {
 }
 
 export function Playground() {
-  usePageMeta(
-    "JSON-RPC Playground for Blockchain RPC Endpoints | KraiNode",
-    "Send raw JSON-RPC requests to Ethereum, Base, Arbitrum, and other chains from your browser. Probe endpoints, switch providers or use your own URL, and inspect responses and latency.",
-    "/playground",
-  );
+  usePageMeta("/playground");
   const [chainDetails, setChainDetails] = useState<ChainDetails[]>([]);
   const [chainsLoading, setChainsLoading] = useState(true);
   const [chainsError, setChainsError] = useState<string | null>(null);
@@ -561,7 +557,7 @@ export function Playground() {
           </div>
           <div className="mb-4 rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-800 flex items-start gap-2">
             <svg className="w-5 h-5 mt-0.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2a3 3 0 016 0v2H7V6z" clip-rule="evenodd" />
+              <path fillRule="evenodd" d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2a3 3 0 016 0v2H7V6z" clipRule="evenodd" />
             </svg>
             <p>
               <strong>No backend storage:</strong> Headers and API keys stay in your browser only. 

@@ -7,7 +7,7 @@
     "predev": "node ./scripts/build-chains-json.mjs",
     "prebuild": "node ./scripts/build-chains-json.mjs",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir node_modules/.prerender && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

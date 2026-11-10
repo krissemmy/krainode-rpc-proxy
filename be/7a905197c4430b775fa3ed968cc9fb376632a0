@@ -1,0 +1,157 @@
+web/vercel.json
+  s_c93c86a4ce4708::t_c719ce2faf9a84 3
+web/package.json
+  s_c93c86a4ce4708::t_ef09e7a31824ad 10
+web/src/lib/pageMeta.ts
+  s_c93c86a4ce4708::t_fff65a5603926e 3,5-33,35,46
+web/index.html
+  s_c93c86a4ce4708::t_b8f8075f010b6f 15-27
+  s_c93c86a4ce4708::t_245a0a15f9ba45 89
+web/src/pages/Home.tsx
+  s_c93c86a4ce4708::t_846e8ab8f93a7d 92
+web/scripts/prerender.mjs
+  s_c93c86a4ce4708::t_99cfdf9a962b6e 8-10
+  s_c93c86a4ce4708::t_a2f3baf5c868b3 1-7,11-48
+web/src/main.tsx
+  s_c93c86a4ce4708::t_3c1eea520e80da 10-12
+  s_c93c86a4ce4708::t_87b96026380143 30-39
+web/vite.config.ts
+  s_c93c86a4ce4708::t_3afe8c6181503d 6
+  s_c93c86a4ce4708::t_453234ad4d9153 19-23
+  s_c93c86a4ce4708::t_86e08e1ecd5f53 36
+web/src/pages/Playground.tsx
+  s_c93c86a4ce4708::t_846e8ab8f93a7d 64
+  s_c93c86a4ce4708::t_99cfdf9a962b6e 560
+web/src/pages/DocsPage.tsx
+  s_c93c86a4ce4708::t_846e8ab8f93a7d 54
+web/src/components/ThemeProvider.tsx
+  s_c93c86a4ce4708::t_672e2d53610d80 15-16
+web/src/entry-server.tsx
+  s_c93c86a4ce4708::t_06443917bfd122 1-14
+web/src/pages/About.tsx
+  s_c93c86a4ce4708::t_846e8ab8f93a7d 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "autter_version": "3.0.0",
+  "base_commit_sha": "be7a905197c4430b775fa3ed968cc9fb376632a0",
+  "branch": "prerender-routes",
+  "prompts": {
+    "s_c93c86a4ce4708": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "66a6dd08-c9ff-4484-a244-15f33f5fd950",
+        "model": "claude-fable-5-2"
+      },
+      "human_author": "krissemmy <krissemmy17@gmail.com>",
+      "messages_url": "cas:9b9fe941293d02e3afdad167fff14ab0a438faa635be952dd6f994567f32e7f2",
+      "total_additions": 140,
+      "total_deletions": 66,
+      "accepted_lines": 856,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_c93c86a4ce4708": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "66a6dd08-c9ff-4484-a244-15f33f5fd950",
+        "model": "claude-fable-5-2"
+      },
+      "human_author": "krissemmy <krissemmy17@gmail.com>",
+      "messages_url": "cas:9b9fe941293d02e3afdad167fff14ab0a438faa635be952dd6f994567f32e7f2",
+      "stats": {
+        "total_additions": 140,
+        "total_deletions": 66,
+        "accepted_lines": 856,
+        "overriden_lines": 0,
+        "files": {
+          "web/index.html": {
+            "total_additions": 14,
+            "total_deletions": 29,
+            "accepted_lines": 14,
+            "overriden_lines": 0
+          },
+          "web/package.json": {
+            "total_additions": 1,
+            "total_deletions": 1,
+            "accepted_lines": 1,
+            "overriden_lines": 0
+          },
+          "web/public/chains.json": {
+            "total_additions": 0,
+            "total_deletions": 0,
+            "accepted_lines": 718,
+            "overriden_lines": 0
+          },
+          "web/scripts/prerender.mjs": {
+            "total_additions": 48,
+            "total_deletions": 0,
+            "accepted_lines": 48,
+            "overriden_lines": 0
+          },
+          "web/src/components/ThemeProvider.tsx": {
+            "total_additions": 4,
+            "total_deletions": 0,
+            "accepted_lines": 2,
+            "overriden_lines": 0
+          },
+          "web/src/entry-server.tsx": {
+            "total_additions": 14,
+            "total_deletions": 0,
+            "accepted_lines": 14,
+            "overriden_lines": 0
+          },
+          "web/src/lib/pageMeta.ts": {
+            "total_additions": 33,
+            "total_deletions": 6,
+            "accepted_lines": 33,
+            "overriden_lines": 0
+          },
+          "web/src/main.tsx": {
+            "total_additions": 13,
+            "total_deletions": 3,
+            "accepted_lines": 13,
+            "overriden_lines": 0
+          },
+          "web/src/pages/About.tsx": {
+            "total_additions": 1,
+            "total_deletions": 5,
+            "accepted_lines": 1,
+            "overriden_lines": 0
+          },
+          "web/src/pages/DocsPage.tsx": {
+            "total_additions": 1,
+            "total_deletions": 5,
+            "accepted_lines": 1,
+            "overriden_lines": 0
+          },
+          "web/src/pages/Home.tsx": {
+            "total_additions": 1,
+            "total_deletions": 5,
+            "accepted_lines": 1,
+            "overriden_lines": 0
+          },
+          "web/src/pages/Playground.tsx": {
+            "total_additions": 2,
+            "total_deletions": 6,
+            "accepted_lines": 2,
+            "overriden_lines": 0
+          },
+          "web/vercel.json": {
+            "total_additions": 1,
+            "total_deletions": 1,
+            "accepted_lines": 1,
+            "overriden_lines": 0
+          },
+          "web/vite.config.ts": {
+            "total_additions": 7,
+            "total_deletions": 5,
+            "accepted_lines": 7,
+            "overriden_lines": 0
+          }
+        }
+      }
+    }
+  }
+}

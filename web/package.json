@@ -32,10 +32,39 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "postcss": "^8.4.27",
+    "postcss": "^8.5.12",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
+  },
+  "overrides": {
+    "@remix-run/router": "1.23.4",
+    "browserslist": "4.28.7",
+    "fflate": "0.4.9",
+    "flatted": "3.4.2",
+    "js-yaml": "4.3.2",
+    "nanoid": "3.3.12",
+    "preact": "10.29.8",
+    "source-map-js": "1.2.2",
+    "@eslint/eslintrc": {
+      "brace-expansion": "1.1.20",
+      "minimatch": "3.1.4"
+    },
+    "@humanwhocodes/config-array": {
+      "brace-expansion": "1.1.20",
+      "minimatch": "3.1.4"
+    },
+    "eslint": {
+      "brace-expansion": "1.1.20",
+      "minimatch": "3.1.4"
+    },
+    "glob@7": {
+      "brace-expansion": "1.1.20",
+      "minimatch": "3.1.4"
+    },
+    "minimatch": "9.0.7",
+    "picomatch": "2.3.2",
+    "rollup": "3.30.0"
   },
   "eslintConfig": {
     "env": {

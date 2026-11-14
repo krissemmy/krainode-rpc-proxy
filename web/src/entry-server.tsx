@@ -1,5 +1,5 @@
 import { renderToString } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server";
+import { StaticRouter } from "react-router-dom";
 import App from "./App";
 
 export { pageMeta, SITE_URL } from "./lib/pageMeta";

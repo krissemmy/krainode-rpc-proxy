@@ -8,9 +8,11 @@ Format loosely follows Keep a Changelog. Versions use SemVer.
 ### Changed
 - 
 ### Fixed
-- Patched non-breaking dependency CVEs from `npm audit` and Autter draft PR #16 (same-major bumps and overrides only).
+- Patched non-breaking dependency CVEs from `npm audit` and
+  Autter draft PR #16 (same-major bumps and overrides only).
 ### Infra
-- Node base image `node:20-alpine` → `node:22.23.5-alpine` (Node 20 is EOL; 22.23.5 includes the 11 Nov 2026 security release).
+- Node base image `node:20-alpine` to `node:22.23.5-alpine`.
+  Node 20 is EOL; 22.23.5 includes the 11 Nov 2026 security release.
 - Caddy image pinned from floating `caddy:2` to `caddy:2.11.9`. 
 
 ---

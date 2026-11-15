@@ -13,7 +13,7 @@ Format loosely follows Keep a Changelog. Versions use SemVer.
 ### Infra
 - Node base image `node:20-alpine` to `node:22.23.5-alpine`.
   Node 20 is EOL; 22.23.5 includes the 11 Nov 2026 security release.
-- Caddy image pinned from floating `caddy:2` to `caddy:2.11.9`. 
+- Caddy image pinned from floating `caddy:2` to `caddy:2.11.9`.
 
 ---
 

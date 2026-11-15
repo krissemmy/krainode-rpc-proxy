@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS deps
+# Node 20 reached EOL on 30 Apr 2026 and has no build for the 11 Nov 2026
+# security release. 22.23.5 is the patched Node 22 (Maintenance LTS) image.
+FROM node:22.23.5-alpine AS deps
 WORKDIR /app/web
 
 # 1) Copy only manifests to unlock cache
@@ -27,7 +29,7 @@ RUN --mount=type=cache,target=/root/.npm \
     npm run build
 
 # ---------- runtime ----------
-FROM node:20-alpine AS preview
+FROM node:22.23.5-alpine AS preview
 WORKDIR /app
 COPY --from=build /app/web/dist ./dist
 RUN npm install -g serve

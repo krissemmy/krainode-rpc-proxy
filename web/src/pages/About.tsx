@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Twitter, Github } from "lucide-react";
+import { AtSign, GitBranch, Mail } from "lucide-react";
 import { TeamCard } from "@/components/TeamCard";
 import { teamMembers } from "@/data/team";
 import { Container, Section } from "@/components/layout";
@@ -32,7 +32,7 @@ export default function About() {
                 rel="noreferrer"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary-600 bg-white px-6 text-sm font-semibold text-primary-700 shadow transition hover:border-primary-500 hover:text-primary-600 sm:text-base"
               >
-                <Twitter className="h-5 w-5" />
+                <AtSign className="h-5 w-5" />
                 X/Twitter
               </a>
               <a
@@ -46,7 +46,7 @@ export default function About() {
                 href="https://github.com/krissemmy/krainode-rpc-proxy"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary-600 bg-white px-6 text-sm font-semibold text-primary-700 shadow transition hover:border-primary-500 hover:text-primary-600 sm:text-base"
               >
-                <Github className="h-5 w-5" />
+                <GitBranch className="h-5 w-5" />
                 GitHub Repo
               </a>
             </div>
